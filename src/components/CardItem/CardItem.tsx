@@ -22,8 +22,9 @@ export const CardItem: React.FC<ItemByProps> = ({ item }) => {
   return (
     <Card 
       sx={{
-        marginX: 3,
+        margin: 0,
         padding: 2,
+        marginX: 2.5,
         marginTop: 3,
         width: '300px',
         height: '500px',

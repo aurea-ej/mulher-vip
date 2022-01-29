@@ -4,15 +4,15 @@ import { Footer, Header } from './components'
 
 export const Container: React.FC = ({ children }) => {
   return (
-    <Stack justifyContent='space-between'
+    <Stack
+      justifyContent='space-between'
       sx={{
         width: '100vw',
         minHeight: '100vh',
-        overflowX: 'hidden',
-        // backgroundColor: '#FCFCFC'
       }}>
       <Header />
-      <Stack alignItems='center' sx={{ padding: 2 }}>
+      {/* <Stack alignItems='center' sx={{ width: '100%', marginX: isMobile ? 0 : 2 }}> */}
+      <Stack alignItems='center' sx={{ width: '100%' }}>
         {children}
       </Stack>
       <Footer />

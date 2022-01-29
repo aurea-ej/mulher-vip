@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import 'firebase/auth'
 import 'firebase/database'
 import { Slide } from './components'
@@ -6,18 +6,17 @@ import { Close } from '@mui/icons-material'
 import { useIsMobile } from '../../hooks/useIsMobile'
 import { getUserInfos } from '../../hooks/useUseInfo'
 import { Container, CardItem } from '../../components'
+import { Grid, Stack, Typography } from '@mui/material'
 import { useUserStore } from '../../store/user/reducer'
 import { getProducts } from '../../hooks/useGetProducts'
 import { useItemsStore } from '../../store/items/reducer'
 import { useAccountStore } from '../../store/account/reducer'
-import { CircularProgress, Grid, Stack, Typography } from '@mui/material'
 import { useSelectedFilterStore } from '../../store/selectedFilter/reducer'
 import { useHaveFilteredItemsStore } from '../../store/haveFilteredItems/reducer'
 
 export const Home: React.FC = () => {
   const isMobile = useIsMobile()
   const { storeState: { user } } = useUserStore()
-  const [isLoading, setIsLoading] = useState<boolean>()
   const { storeState: { haveFilteredItems } } = useHaveFilteredItemsStore()
   const { storeState: { items }, operations: { updateItems } } = useItemsStore()
   const { storeState: { account }, operations: { updateAccount } } = useAccountStore()
@@ -40,22 +39,15 @@ export const Home: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
-  if (isLoading) {
-    <Stack alignItems='center' justifyContent='center' sx={{ height: 'calc(90vh - 48px)' }}>
-      <CircularProgress color='secondary' />
-    </Stack>
-  }
-
   return (
     <Container>
       <Stack
         mb={5}
-        direction={isMobile ? 'column' : 'row'}
         alignItems='center'
         justifyContent='center'
         sx={{
           width: '100vw',
-          height: '40vh',
+          maxHeight: isMobile ? '20vh' : '40vh',
         }}>
         <Slide />
       </Stack>
@@ -82,7 +74,7 @@ export const Home: React.FC = () => {
       {items && haveFilteredItems && (
         <Grid container>
           {items.map((item, key) => {
-            return item.isAvailable ? 
+            return item.isAvailable ?
               (
                 <Grid md={isMobile ? 12 : 3} lg={isMobile ? 12 : 3} xs={isMobile ? 12 : 3} item>
                   <CardItem key={key} item={item} />
