@@ -3,7 +3,7 @@ import { SeeSale } from './components'
 import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 import { Sale } from '../../../../types/item'
-import { Stack, Typography } from '@mui/material'
+import { CircularProgress, Stack, Typography } from '@mui/material'
 import { Container } from '../../../../components'
 import { app } from '../../../../FIREBASECONFIG.js'
 import { useModal } from '../../../../hooks/useModal'
@@ -43,7 +43,11 @@ export const TrackSales: React.FC = () => {
   },[])
 
   if(!sales)
-    return <div>nao tem vendas</div>
+    return (
+      <Container>
+        <CircularProgress sx={{ color: '#a9cf46' }} />
+      </Container>
+    )
 
   return (
     <Container>

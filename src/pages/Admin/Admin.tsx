@@ -1,4 +1,5 @@
 import Lottie from 'react-lottie'
+import { useHistory } from 'react-router'
 import { Container } from '../../components'
 import AddIcon from '@mui/icons-material/Add'
 import { useModal } from '../../hooks/useModal'
@@ -6,8 +7,8 @@ import SyncAltIcon from '@mui/icons-material/SyncAlt'
 import { Box, Stack, Typography } from '@mui/material'
 import TimelineIcon from '@mui/icons-material/Timeline'
 import adminAnimation from '../../assets/lottie/admin.json'
-import { InsertItemModal, UpdateItemModal } from './components'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import { InsertItemModal, UpdateItemModal, DeleteItemModal } from './components'
 
 const DEFAULT_OPTIONS = {
   loop: true,
@@ -19,8 +20,10 @@ const DEFAULT_OPTIONS = {
 }
 
 export const Admin: React.FC = () => {
+  const history = useHistory()
   const [insertItemIsOpen, toggleInsertItem] = useModal()
   const [updateItemIsOpen, toggleUpdateItem] = useModal()
+  const [deleteItemIsOpen, toggleDeleteItemIsOpen] = useModal()
 
   return (
     <Container>
@@ -57,13 +60,13 @@ export const Admin: React.FC = () => {
                 <b>ATUALIZAR</b>
               </Typography>
             </Stack>
-            <Stack>
+            <Stack onClick={toggleDeleteItemIsOpen}>
               <Typography sx={{ display: 'flex', color: '#9CADBF', alignItems: 'center', cursor: 'pointer' }}>
                 <DeleteForeverIcon sx={{ marginRight: 1 }} />
                 <b>DELETAR</b>
               </Typography>
             </Stack>
-            <Stack>
+            <Stack onClick={()=>history.push('/admin/vendas')}>
               <Typography sx={{ display: 'flex', color: '#9CADBF', alignItems: 'center', cursor: 'pointer' }}>
                 <TimelineIcon sx={{ marginRight: 1 }} />
                 <b>ACOMPANHAR PEDIDOS</b>
@@ -123,6 +126,7 @@ export const Admin: React.FC = () => {
       </Stack> */}
       <InsertItemModal closeModal={toggleInsertItem} isOpen={insertItemIsOpen} />
       <UpdateItemModal closeModal={toggleUpdateItem} isOpen={updateItemIsOpen} />
+      <DeleteItemModal closeModal={toggleDeleteItemIsOpen} isOpen={deleteItemIsOpen} />
     </Container>
   )
 }
