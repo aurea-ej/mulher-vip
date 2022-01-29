@@ -51,13 +51,13 @@ export const Account: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[user])
 
-  if(!account) {
-    return (
-      <Container>
-        <CircularProgress sx={{ color: '#a9cf46' }} />
-      </Container>
-    )
-  }
+  // if(!account) {
+  //   return (
+  //     <Container>
+  //       <CircularProgress sx={{ color: '#a9cf46' }} />
+  //     </Container>
+  //   )
+  // }
 
   if(!user) {
     return <SignIn />
