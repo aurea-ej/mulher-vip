@@ -140,6 +140,7 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
                 multiline
                 name='note'
                 inputType='flat'
+                defaultValue=' '
                 control={control}
                 component={TextInput}
                 sx={{ display: 'flex', flex: 1, width: '100%', marginBottom: 2 }}

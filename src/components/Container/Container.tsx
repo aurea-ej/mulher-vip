@@ -9,9 +9,9 @@ export const Container: React.FC = ({ children }) => {
       sx={{
         width: '100vw',
         minHeight: '100vh',
+        overflowX: 'hidden',
       }}>
       <Header />
-      {/* <Stack alignItems='center' sx={{ width: '100%', marginX: isMobile ? 0 : 2 }}> */}
       <Stack alignItems='center' sx={{ width: '100%' }}>
         {children}
       </Stack>
