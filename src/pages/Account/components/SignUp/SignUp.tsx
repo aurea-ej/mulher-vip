@@ -13,7 +13,7 @@ import { useUserStore } from '../../../../store/user/reducer'
 import { Container, HfField, TextInput } from '../../../../components'
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 
-type formValuesType = Omit<Account, 'isAdmin' | 'id'> & { senha: string }
+type formValuesType = Omit<Account, 'isAdmin' | 'id'> & { senha: string | null }
 
 export const SignUp: React.FC = () => {
   const auth = getAuth()
@@ -47,9 +47,10 @@ export const SignUp: React.FC = () => {
   })
 
   const onSubmit = (formValues: formValuesType ) => {
-    createUserWithEmailAndPassword(auth, formValues.email, formValues.senha)
+    createUserWithEmailAndPassword(auth, formValues.email, formValues.senha!)
       .then((userCredential) => {
         const user = userCredential.user as unknown as User
+        formValues.senha = null
         setUserInfos(user, formValues)
         history.push('account')
       })
