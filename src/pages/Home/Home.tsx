@@ -76,7 +76,7 @@ export const Home: React.FC = () => {
           {items.map((item, key) => {
             return item.isAvailable ?
               (
-                <Grid md={isMobile ? 12 : 3} lg={isMobile ? 12 : 3} xs={isMobile ? 12 : 3} item>
+                <Grid sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} md={isMobile ? 12 : 3} lg={isMobile ? 12 : 3} xs={isMobile ? 12 : 3} item>
                   <CardItem key={key} item={item} />
                 </Grid>
               ) : null

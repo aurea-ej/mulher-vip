@@ -22,9 +22,8 @@ export const CardItem: React.FC<ItemByProps> = ({ item }) => {
   return (
     <Card 
       sx={{
-        margin: 0,
         padding: 2,
-        marginX: 2.5,
+        marginX: [null,2.5],
         marginTop: 3,
         width: '300px',
         height: '500px',
@@ -32,6 +31,9 @@ export const CardItem: React.FC<ItemByProps> = ({ item }) => {
         cursor: 'pointer',
         boxShadow: '0px 2px 5px rgba(0, 0, 0, .1)',
         '&:hover': {
+          boxShadow: '0px 2px 15px rgba(0, 0, 0, .2)',
+        },
+        '&:focus': {
           boxShadow: '0px 2px 15px rgba(0, 0, 0, .2)',
         }
       }}>

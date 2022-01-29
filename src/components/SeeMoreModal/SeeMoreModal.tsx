@@ -220,7 +220,7 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
                 boxShadow: '0px 0px 10px rgba(169, 207, 70, .5)',
               }}
             >
-              <Typography sx={{ fontSize: isMobile ? '1.5em' : '2em' }} variant='h4' color='white'>{formatToRealStr(Number(item.price))}</Typography>
+              <Typography sx={{ fontSize: isMobile ? '1.2em' : '2em', whiteSpace: 'nowrap' }} variant='h4' color='white'>{formatToRealStr(Number(item.price))}</Typography>
               <Box
                 sx={{
                   padding: 2,
