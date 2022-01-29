@@ -8,7 +8,7 @@ export const Container: React.FC = ({ children }) => {
       sx={{
         width: '100vw',
         minHeight: '100vh',
-        // overflowX: 'hidden',
+        overflowX: 'hidden',
         // backgroundColor: '#FCFCFC'
       }}>
       <Header />

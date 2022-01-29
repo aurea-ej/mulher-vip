@@ -7,8 +7,10 @@ import {
   MenuItem,
   ClickAwayListener,
   Stack,
+  Typography,
 } from '@mui/material'
 import { ArrowDropDown } from '@mui/icons-material'
+import { useIsMobile } from '../../../../../../hooks'
 import { useItemsStore } from '../../../../../../store/items/reducer'
 import { getSectionMenuItem } from '../../../../../../utils/getSectionMenuItem'
 import { useSelectedFilterStore } from '../../../../../../store/selectedFilter/reducer'
@@ -22,6 +24,7 @@ export interface SectionMenuProps {
 
 export const SectionMenu: React.FC<SectionMenuProps> = ({ title, category }) => {
   const [open, setOpen] = useState(false)
+  const isMobile = useIsMobile()
   const anchorRef = useRef<HTMLButtonElement>(null)
   const { operations: { updateSelectedFilter } } = useSelectedFilterStore()
   const { storeState: { items }, operations: { updateItems } } = useItemsStore()
@@ -82,10 +85,10 @@ export const SectionMenu: React.FC<SectionMenuProps> = ({ title, category }) => 
         onClick={handleToggle}
         direction='row'
         alignItems='center'
-        sx={{ cursor: 'pointer', marginX: 2 }}
+        sx={{ cursor: 'pointer' }}
       >
-        {title}
-        <ArrowDropDown />
+        <Typography sx={{ fontSize: isMobile ? '.8em' : '1em' }}>{title}</Typography>
+        {!isMobile && <ArrowDropDown />}
       </Stack>
       <Popper
         open={open}
@@ -113,7 +116,6 @@ export const SectionMenu: React.FC<SectionMenuProps> = ({ title, category }) => 
                 >
                   {getSectionMenuItem(category)?.map(item => {
                     return <MenuItem onClick={()=>filterItem(item.value as keyof typeof AllItemsByCategories)}>{item.label}</MenuItem>
-                    // return <MenuItem onClick={handleClose}>{item.label}</MenuItem>
                   })}
                 </MenuList>
               </ClickAwayListener>

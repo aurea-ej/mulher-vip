@@ -60,7 +60,7 @@ export const Home: React.FC = () => {
         <Slide />
       </Stack>
       {filter && (
-        <Stack alignItems='flex-end' direction='row' sx={{ width: '100%' }}>
+        <Stack  alignItems='flex-end' sx={{ width: '100%' }}  direction='row'>
           <Typography variant='h6'
             sx={{
               paddingX: 2,
@@ -84,7 +84,7 @@ export const Home: React.FC = () => {
           {items.map((item, key) => {
             return item.isAvailable ? 
               (
-                <Grid md={isMobile ? 1 : 3} lg={isMobile ? 1 : 3} xs={isMobile ? 1 : 3} item>
+                <Grid md={isMobile ? 12 : 3} lg={isMobile ? 12 : 3} xs={isMobile ? 12 : 3} item>
                   <CardItem key={key} item={item} />
                 </Grid>
               ) : null
