@@ -102,7 +102,6 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
       <Typography variant='h2' sx={{ textAlign: 'center' }} >Atualizar item</Typography>
 
       <Stack>
-        <button onClick={resetForm}>resetar</button>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack>
             <HfField

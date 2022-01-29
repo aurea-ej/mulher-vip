@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import 'firebase/auth'
 import 'firebase/database'
 import { User } from '../../types/user'
@@ -6,17 +6,16 @@ import { useSnackbar } from 'notistack'
 import { Container } from '../../components'
 import { app } from '../../FIREBASECONFIG.js'
 import { SignIn, ProfileCard } from './components'
+import { getUserInfos } from '../../hooks/useUseInfo'
 import { useUserStore } from '../../store/user/reducer'
-import { Account as AccountProps } from '../../types/user'
-import { Box, CircularProgress, Grid, Stack, Typography } from '@mui/material'
-import { getDatabase, ref, onValue } from 'firebase/database'
 import { useAccountStore } from '../../store/account/reducer'
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
+import { Box, CircularProgress, Grid, Stack, Typography } from '@mui/material'
 
 export const Account: React.FC = () => {
   const auth = getAuth(app)
-  const db = getDatabase(app)
   const { enqueueSnackbar } = useSnackbar()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const { operations: { updateUser }, storeState: { user } } = useUserStore()
   const { operations: { updateAccount }, storeState: { account } } = useAccountStore()
 
@@ -24,34 +23,31 @@ export const Account: React.FC = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         updateUser(user as unknown as User)
-        getUserInfos(user as unknown as User)
+        getUserInfos(updateAccount)
       }
+      setIsLoading(false)
     })
   }
 
-  const getUserInfos = (user: User) =>{
-    const userInfosRef = ref(db, 'userInfo/' + user.uid)
-    onValue(userInfosRef, (snapshot) => {
-      const data = snapshot.val() as AccountProps
-      if(data){
-        updateAccount(data)
-        return 
-      }
-      return enqueueSnackbar('Ops! ocorreu um erro ao recuperar suas informações', { 
+  const onSignOut = () => {
+    signOut(auth).then(()=>{
+      window.location.reload()
+    }).catch(()=>{
+      return enqueueSnackbar('Ocorreu um erro ao sair da sua conta', {
         variant: 'error',
-        autoHideDuration: 3000
+        autoHideDuration: 3000,
       })
     })
   }
 
   useEffect(()=>{
-    if(!user) {
+    if(!user || !account) {
       getUser()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[user])
 
-  if(!account) {
+  if(isLoading) {
     return (
       <Container>
         <CircularProgress sx={{ color: '#a9cf46' }} />
@@ -59,7 +55,7 @@ export const Account: React.FC = () => {
     )
   }
 
-  if(!user) {
+  if(!isLoading && (!user || !account)) {
     return <SignIn />
   }
 
@@ -97,7 +93,7 @@ export const Account: React.FC = () => {
             bgcolor: 'rgba(169, 207, 70, .7)',
           }}
           mt={8}
-          onClick={()=>signOut(auth)}>
+          onClick={()=>onSignOut()}>
           Sair
         </Box>
       </Stack>

@@ -21,6 +21,5 @@ export const SeeSaleCard: React.FC<CartItemByProps> = ({ item }) => {
         <Typography>{item.amount} unidades: <b style={{ color: '#a9cf46' }}>R$ {(item.amount * Number(item.price)).toFixed(2)}</b></Typography>
       </Stack>
     </Stack>
-
   )
 }

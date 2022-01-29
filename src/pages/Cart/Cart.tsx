@@ -10,7 +10,7 @@ import { getUserInfos } from '../../hooks/useUseInfo'
 import { useAccountStore } from '../../store/account/reducer'
 import { useCartItemsStore } from '../../store/cartItems/reducer'
 import { Container, SmallCardItem, EmptyPage } from '../../components'
-import { getDatabase, ref, child, get, set, push } from 'firebase/database'
+import { getDatabase, ref, child, get, set, push, remove } from 'firebase/database'
 
 export const Cart: React.FC = () => {
   const db = getDatabase(app)
@@ -57,11 +57,14 @@ export const Cart: React.FC = () => {
       const key = push(child(ref(db), 'sales')).key
       set(ref(db, 'sales/' + key), sale)
         .then(()=>{
-          resetCartItems()
-          return enqueueSnackbar('Compra finalizada', { 
-            variant: 'success',
-            autoHideDuration: 3000
-          })
+          remove(ref(db, '/cart/' +  account.id))
+            .then(()=>{
+              resetCartItems()
+              return enqueueSnackbar('Compra finalizada', { 
+                variant: 'success',
+                autoHideDuration: 3000
+              })
+            })
         })
         .catch(() => {
           return enqueueSnackbar('Ops! ocorreu um erro ao realizar o cadastro', { 
