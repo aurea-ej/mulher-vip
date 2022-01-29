@@ -94,11 +94,19 @@ export const Cart: React.FC = () => {
   },[])
 
   if(isLoading) {
-    return <EmptyPage />
+    return (
+      <Container>
+        <EmptyPage />
+      </Container>
+    )
   }
 
   if(CartItems.length === 0) {
-    return <EmptyPage />
+    return (
+      <Container>
+        <EmptyPage />
+      </Container>
+    )
   }
 
   return (

@@ -5,19 +5,19 @@ import { Slide } from './components'
 import { Close } from '@mui/icons-material'
 import { useIsMobile } from '../../hooks/useIsMobile'
 import { getUserInfos } from '../../hooks/useUseInfo'
-import { Container, CardItem } from '../../components'
 import { Grid, Stack, Typography } from '@mui/material'
 import { useUserStore } from '../../store/user/reducer'
 import { getProducts } from '../../hooks/useGetProducts'
 import { useItemsStore } from '../../store/items/reducer'
 import { useAccountStore } from '../../store/account/reducer'
+import { Container, CardItem, EmptyPage } from '../../components'
 import { useSelectedFilterStore } from '../../store/selectedFilter/reducer'
 import { useHaveFilteredItemsStore } from '../../store/haveFilteredItems/reducer'
 
 export const Home: React.FC = () => {
   const isMobile = useIsMobile()
   const { storeState: { user } } = useUserStore()
-  const { storeState: { haveFilteredItems } } = useHaveFilteredItemsStore()
+  const { storeState: { haveFilteredItems }, operations: { updateHaveFilteredItems } } = useHaveFilteredItemsStore()
   const { storeState: { items }, operations: { updateItems } } = useItemsStore()
   const { storeState: { account }, operations: { updateAccount } } = useAccountStore()
   const { storeState: { filter }, operations: { resetSelectedFilter } } = useSelectedFilterStore()
@@ -25,6 +25,7 @@ export const Home: React.FC = () => {
   const clearFilter = () => {
     resetSelectedFilter()
     getProducts(updateItems)
+    updateHaveFilteredItems(true)
   }
 
   useEffect(()=>{
@@ -52,8 +53,8 @@ export const Home: React.FC = () => {
         <Slide />
       </Stack>
       {filter && (
-        <Stack  alignItems='flex-end' sx={{ width: '100%' }}  direction='row'>
-          <Typography variant='h6'
+        <Stack  justifyContent='flex-end' sx={{ width: '95%' }}  direction='row'>
+          <Typography
             sx={{
               paddingX: 2,
               paddingY: 1,
@@ -66,12 +67,12 @@ export const Home: React.FC = () => {
               borderRadius: '30px',
               boxShadow: '0px 0px 10px rgba(169, 207, 70, .5)',
             }}>
-              Filtro: {filter}
+              Filtro: <b>{filter}</b>
             <Stack alignItems='center' onClick={clearFilter}><Close /></Stack>
           </Typography>
         </Stack>
       )}
-      {items && haveFilteredItems && (
+      {items && haveFilteredItems ? (
         <Grid container>
           {items.map((item, key) => {
             return item.isAvailable ?
@@ -83,8 +84,9 @@ export const Home: React.FC = () => {
           }
           )}
         </Grid>
+      ) : (
+        <EmptyPage dontShowActionButton={true} />
       )}
-      {!items && <div>Sem itens</div>}
     </Container>
   )
 }
