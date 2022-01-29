@@ -60,7 +60,7 @@ export const CardItem: React.FC<ItemByProps> = ({ item }) => {
           sx={{ backgroundColor: 'rgba(169, 207, 70, .7)', borderRadius: 3, margin: .5 }}
         >
           <Stack sx={{ width: '100%', textAlign: 'center' }}>
-            <Typography variant='h5' sx={{ color: 'white' }}>{item.name}</Typography>
+            <Typography variant='h6' sx={{ color: 'white' }}>{item.name}</Typography>
             <Typography variant='h6'><b>{formatToRealStr(Number(item.price))}</b></Typography>
             <Stack sx={{ width: '100%' }} alignItems='flex-end'>
               <OpenInFull sx={{ color: 'white', paddingRight: 1, paddingBottom: 1 }} />

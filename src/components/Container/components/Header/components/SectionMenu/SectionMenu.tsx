@@ -65,6 +65,7 @@ export const SectionMenu: React.FC<SectionMenuProps> = ({ title, category }) => 
     }
     updateSelectedFilter(code)
     updateHaveFilteredItems(false)
+    setOpen(false)
   }
 
   const prevOpen = useRef(open)
