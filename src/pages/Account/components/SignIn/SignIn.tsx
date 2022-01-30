@@ -1,42 +1,47 @@
-import { useState } from 'react'
 import 'firebase/auth'
 import 'firebase/database'
+import * as yup from 'yup'
 import { useSnackbar } from 'notistack'
+import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router'
 import { User } from '../../../../types/user'
-import { Container } from '../../../../components'
-import { Box, Button, Input } from '@mui/material'
+import { useIsMobile } from '../../../../hooks'
 import { app } from '../../../../FIREBASECONFIG.js'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { getDatabase, ref, onValue } from 'firebase/database'
 import { useUserStore } from '../../../../store/user/reducer'
+import { Box, Button, Stack, Typography } from '@mui/material'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { useAccountStore } from '../../../../store/account/reducer'
+import { Container, HfField, TextInput, PasswordInput } from '../../../../components'
+
+interface SignInformValues {
+  email: string
+  password: string
+}
 
 export const SignIn: React.FC = () => {
   const auth = getAuth()
   const db = getDatabase(app)
   const history = useHistory()
+  const isMobile = useIsMobile()
   const { enqueueSnackbar } = useSnackbar()
-  const[email, setEmail] = useState<string>('')
-  const[password, setPassword] = useState<string>('')
   const { operations: { updateUser } } = useUserStore()
   const { operations: { updateAccount } } = useAccountStore()
-
-  const sigIn = () => {
-    if(email && password) {
-      signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user as unknown as User
-          updateUser(user)
-          getUserInfos(user)
+  
+  const onSubmit = (formValues: SignInformValues) => {
+    signInWithEmailAndPassword(auth, formValues.email, formValues.password)
+      .then((userCredential) => {
+        const user = userCredential.user as unknown as User
+        updateUser(user)
+        getUserInfos(user)
+      })
+      .catch((error) => {
+        return enqueueSnackbar(error.message, { 
+          variant: 'error', 
+          autoHideDuration: 6000 
         })
-        .catch((error) => {
-          return enqueueSnackbar(error.message, { 
-            variant: 'error', 
-            autoHideDuration: 6000 
-          })
-        })
-    }
+      })
   }
 
   const getUserInfos = (user: User) =>{
@@ -55,13 +60,71 @@ export const SignIn: React.FC = () => {
     })
   }
 
+  const validationSchema: yup.SchemaOf<SignInformValues> = yup.object().shape({
+    email: yup.string().required('Campo obrigatório'),
+    password: yup.string().required('Campo obrigatório'),
+  })
+
+  const { control, handleSubmit, formState: { errors } } = useForm<SignInformValues>({
+    resolver: yupResolver(validationSchema)
+  })
+
   return (
-    <Box sx={{ backgroundColor: '#3b3b3b' }}>
+    <Box>
       <Container>
-        <Input placeholder='Email' onChange={(event)=>setEmail(event.target.value)} />
-        <Input placeholder='Senha' onChange={(event)=>setPassword(event.target.value)} />
-        <Button onClick={sigIn}>Entrar</Button>
-        <Button onClick={()=>history.push('SignUp')}>Cadastrar</Button>
+        <form style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} onSubmit={handleSubmit(onSubmit)}>
+          <Stack justifyContent='center' alignItems='center' sx={{ height: '60%', width: '100%' }}>
+            <Typography sx={{ textAlign: 'center' }} variant='h4'>LOGIN</Typography>
+            <HfField
+              name='email'
+              type='email'
+              inputType='flat'
+              control={control}
+              label='Seu e-mail'
+              component={TextInput}
+              errorMessage={errors.email?.message}
+              sx={{ width: isMobile ? '80vw' : '40vw', marginBottom: 2 }}
+            />
+            <HfField
+              label='Senha'
+              name='password'
+              inputType='flat'
+              control={control}
+              component={PasswordInput}
+              errorMessage={errors.password?.message}
+              sx={{ width: isMobile ? '80vw' : '40vw' }}
+            />
+            <Stack mt={3} spacing={2} direction={isMobile ? 'column-reverse' : 'row'}>
+              <Box
+                onClick={()=>history.push('/signUp')}
+                component={Button}
+                sx={{
+                  padding: 2,
+                  borderRadius: 3,
+                  color: '#a9cf46',
+                  cursor: 'pointer',
+                  width: isMobile ? '80vw' : 'auto',
+                  '&:hover': { backgroundColor: 'white' },
+                  boxShadow: '0px 0px 5px rgba(169, 207, 70, 1)',
+                }}
+              >Cadastrar</Box>
+              <Box
+                type='submit'
+                component={Button}
+                sx={{
+                  padding: 2,
+                  color: 'white',
+                  borderRadius: 3,
+                  cursor: 'pointer',
+                  bgcolor: '#a9cf46',
+                  width: isMobile ? '80vw' : 'auto',
+                  '&:hover': { backgroundColor: '#a9cf46' },
+                  boxShadow: '0px 0px 5px rgba(169, 207, 70, 1)',
+                }}
+              >Entrar</Box>
+            </Stack>
+          </Stack>
+        </form>
       </Container>
     </Box>
   )
