@@ -1,4 +1,4 @@
-import { SectionMenu } from './components'
+import { SectionMenu, MobileHeader } from './components'
 import Logo from '../../../../assets/images/logoMulherVip.png'
 import {
 
@@ -9,14 +9,18 @@ import {
   Toolbar,
 } from '@mui/material'
 import { useHistory } from 'react-router'
+import { useIsMobile } from '../../../../hooks'
 import { AccountCircle, ShoppingCart } from '@mui/icons-material'
 import { useAccountStore } from '../../../../store/account/reducer'
 import { Categories, CategoriesTitle } from '../../../../types/categories'
 
-
 export const Header: React.FC = () => {
   const history = useHistory()
+  const isMobile = useIsMobile()
   const { storeState: { account } } = useAccountStore()
+
+  if(isMobile)
+    return <MobileHeader />
 
   return (
     <AppBar

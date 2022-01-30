@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { HfField, TextInput } from '..'
 import { useForm } from 'react-hook-form'
+import { useIsMobile } from '../../hooks'
 import { Close } from '@mui/icons-material'
 import { CartItem, Item } from '../../types/item'
 import { PaymentMethod } from '../../types/payment'
@@ -31,6 +32,7 @@ const selectOption: selectOptionProps[] = [
 
 export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClose }) => {
   const db = getDatabase()
+  const isMobile = useIsMobile()
   const { enqueueSnackbar } = useSnackbar()
   const [amount, setAmount] = useState<number>(1)
   const { storeState: { account } } = useAccountStore()
@@ -102,14 +104,21 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
       variant='temporary'
       anchor='bottom'
       open={isOpen}
-      PaperProps={{ sx: { maxHeight: '90vh', height: '90vh', paddingX: 4, paddingY: 2, borderRadius: 3 } }}
+      PaperProps={{ sx: {
+        paddingY: 2,
+        height: '90vh',
+        maxHeight: '90vh',
+        paddingX: isMobile ? 1 : 4,
+        borderTopLeftRadius: '20px',
+        borderTopRightRadius: '20px',
+      } }}
     >
 
       <Stack alignItems='flex-end'>
         <Close sx={{ cursor: 'pointer', marginX: 1 }} onClick={onClose} />
       </Stack>
 
-      <Stack direction='row' sx={{ flex: 1, height: '98%', }}>
+      <Stack direction={isMobile ? 'column' : 'row'} sx={{ flex: 1, height: '98%', }}>
         <Stack sx={{ flex: 1, }}>
           <Avatar
             imgProps={{ style: { objectFit: 'contain', borderRadius: '30px' } }}
@@ -121,23 +130,24 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
 
         <Stack justifyContent='space-between' sx={{ flex: 1, height: '100%',  paddingX: 2 }}>
           <Box>
-            <Typography variant='h3' sx={{ textAlign: 'center' }}>{(item.name).toUpperCase()}</Typography>
+            <Typography variant={isMobile ? 'h4' : 'h3'} sx={{ textAlign: 'center' }}>{(item.name).toUpperCase()}</Typography>
             <Typography sx={{ marginTop: 5, opacity: .7, textIndent: '2em' }}>{item.description}</Typography>
           </Box>
           <Box>
-            <Stack mb={3} sx={{ width: '100%' }}>
+            <Stack mt={isMobile ? 3 : 0} mb={3} sx={{ width: '100%' }}>
               <Typography sx={{ marginRight: 2 }}>Observações (opcional):</Typography>
               <HfField
                 multiline
                 name='note'
                 inputType='flat'
+                defaultValue=' '
                 control={control}
                 component={TextInput}
                 sx={{ display: 'flex', flex: 1, width: '100%', marginBottom: 2 }}
                 placeholder='Insira aqui alguma observação sobre o produto'
               />
             </Stack>
-            <Stack direction='row' justifyContent='space-between'>
+            <Stack direction={isMobile ? 'column' : 'row'} justifyContent='space-between'>
               <Stack justifyContent='space-between'>
                 <InputLabel id='payment-method-label'>Forma de pagamento</InputLabel>
                 <Select
@@ -162,7 +172,7 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
                   {selectOption.map((option, key) => <MenuItem key={key} value={option.value}>{option.label}</MenuItem>)}
                 </Select>
               </Stack>
-              <Stack direction='row' alignItems='center'>
+              <Stack justifyContent={isMobile ? 'center' : 'flex-start'} sx={{ marginTop: isMobile ? 3 : 0 }} direction='row' alignItems='center'>
                 <Stack
                   alignItems='center'
                   onClick={decreaseAmount}
@@ -211,7 +221,7 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
                 boxShadow: '0px 0px 10px rgba(169, 207, 70, .5)',
               }}
             >
-              <Typography variant='h4' color='white'>{formatToRealStr(Number(item.price))}</Typography>
+              <Typography sx={{ fontSize: isMobile ? '1.2em' : '2em', whiteSpace: 'nowrap' }} variant='h4' color='white'>{formatToRealStr(Number(item.price))}</Typography>
               <Box
                 sx={{
                   padding: 2,
@@ -223,12 +233,10 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
                 }}
                 onClick={getCartProducts}>Adicionar ao carrinho</Box>
             </Stack>
-            <Typography color='gray'>*O pagamento é realizado no momento da entrega</Typography>
+            <Typography variant='body2' color='gray'>*O pagamento é realizado no momento da entrega</Typography>
           </Box>
         </Stack>
-
       </Stack>
-
     </Drawer>
   )
 }

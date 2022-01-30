@@ -1,24 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import 'firebase/auth'
 import 'firebase/database'
 import { Slide } from './components'
 import { Close } from '@mui/icons-material'
 import { useIsMobile } from '../../hooks/useIsMobile'
 import { getUserInfos } from '../../hooks/useUseInfo'
-import { Container, CardItem } from '../../components'
+import { Grid, Stack, Typography } from '@mui/material'
 import { useUserStore } from '../../store/user/reducer'
 import { getProducts } from '../../hooks/useGetProducts'
 import { useItemsStore } from '../../store/items/reducer'
 import { useAccountStore } from '../../store/account/reducer'
-import { CircularProgress, Grid, Stack, Typography } from '@mui/material'
+import { Container, CardItem, EmptyPage } from '../../components'
 import { useSelectedFilterStore } from '../../store/selectedFilter/reducer'
 import { useHaveFilteredItemsStore } from '../../store/haveFilteredItems/reducer'
 
 export const Home: React.FC = () => {
   const isMobile = useIsMobile()
   const { storeState: { user } } = useUserStore()
-  const [isLoading, setIsLoading] = useState<boolean>()
-  const { storeState: { haveFilteredItems } } = useHaveFilteredItemsStore()
+  const { storeState: { haveFilteredItems }, operations: { updateHaveFilteredItems } } = useHaveFilteredItemsStore()
   const { storeState: { items }, operations: { updateItems } } = useItemsStore()
   const { storeState: { account }, operations: { updateAccount } } = useAccountStore()
   const { storeState: { filter }, operations: { resetSelectedFilter } } = useSelectedFilterStore()
@@ -26,6 +25,7 @@ export const Home: React.FC = () => {
   const clearFilter = () => {
     resetSelectedFilter()
     getProducts(updateItems)
+    updateHaveFilteredItems(true)
   }
 
   useEffect(()=>{
@@ -40,28 +40,21 @@ export const Home: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
-  if (isLoading) {
-    <Stack alignItems='center' justifyContent='center' sx={{ height: 'calc(90vh - 48px)' }}>
-      <CircularProgress color='secondary' />
-    </Stack>
-  }
-
   return (
     <Container>
       <Stack
         mb={5}
-        direction={isMobile ? 'column' : 'row'}
         alignItems='center'
         justifyContent='center'
         sx={{
           width: '100vw',
-          height: '40vh',
+          maxHeight: isMobile ? '20vh' : '40vh',
         }}>
         <Slide />
       </Stack>
       {filter && (
-        <Stack alignItems='flex-end' direction='row' sx={{ width: '100%' }}>
-          <Typography variant='h6'
+        <Stack  justifyContent='flex-end' sx={{ width: '95%' }}  direction='row'>
+          <Typography
             sx={{
               paddingX: 2,
               paddingY: 1,
@@ -74,25 +67,26 @@ export const Home: React.FC = () => {
               borderRadius: '30px',
               boxShadow: '0px 0px 10px rgba(169, 207, 70, .5)',
             }}>
-              Filtro: {filter}
+              Filtro: <b>{filter}</b>
             <Stack alignItems='center' onClick={clearFilter}><Close /></Stack>
           </Typography>
         </Stack>
       )}
-      {items && haveFilteredItems && (
+      {items && haveFilteredItems ? (
         <Grid container>
           {items.map((item, key) => {
-            return item.isAvailable ? 
+            return item.isAvailable ?
               (
-                <Grid md={isMobile ? 1 : 3} lg={isMobile ? 1 : 3} xs={isMobile ? 1 : 3} item>
+                <Grid sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} md={isMobile ? 12 : 3} lg={isMobile ? 12 : 3} xs={isMobile ? 12 : 3} item>
                   <CardItem key={key} item={item} />
                 </Grid>
               ) : null
           }
           )}
         </Grid>
+      ) : (
+        <EmptyPage dontShowActionButton={true} />
       )}
-      {!items && <div>Sem itens</div>}
     </Container>
   )
 }

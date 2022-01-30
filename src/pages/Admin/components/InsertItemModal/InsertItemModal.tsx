@@ -3,6 +3,7 @@ import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { Close } from '@mui/icons-material'
 import { Item } from '../../../../types/item'
+import { useIsMobile } from '../../../../hooks'
 import { ModalProps } from '../../../../types/util'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { getDatabase, ref, set, child, push } from 'firebase/database'
@@ -14,6 +15,7 @@ type InsertItemFormValues = Partial<Item>
 
 export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
   const db = getDatabase()
+  const isMobile = useIsMobile()
   const { enqueueSnackbar } = useSnackbar()
   const isAvailableOptions = [{ value: 0, label: '---' },{ value: 1, label: 'Disponível' }, { value: 2, label: 'Indisponível' }]
 
@@ -68,7 +70,14 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
       variant='temporary'
       anchor='bottom'
       open={isOpen}
-      PaperProps={{ sx: { maxHeight: '90vh', height: '90vh', padding: 2, borderRadius: 3 } }}
+      PaperProps={{ sx: {
+        paddingY: 2,
+        height: '90vh',
+        maxHeight: '90vh',
+        paddingX: isMobile ? 1 : 4,
+        borderTopLeftRadius: '20px',
+        borderTopRightRadius: '20px',
+      } }}
     >
       <Stack alignItems='flex-end'>
         <Close sx={{ cursor: 'pointer', marginX: 1 }} onClick={closeModal} />

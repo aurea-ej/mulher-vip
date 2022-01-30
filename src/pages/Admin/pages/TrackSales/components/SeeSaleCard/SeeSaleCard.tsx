@@ -6,7 +6,7 @@ export const SeeSaleCard: React.FC<CartItemByProps> = ({ item }) => {
   return (
     <Stack
       sx={{
-        marginY: 2,
+        margin: 2,
         paddingY: 2,
         paddingX: 4,
         borderRadius: 3,

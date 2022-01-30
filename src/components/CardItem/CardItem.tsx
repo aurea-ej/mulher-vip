@@ -22,8 +22,8 @@ export const CardItem: React.FC<ItemByProps> = ({ item }) => {
   return (
     <Card 
       sx={{
-        marginX: 3,
         padding: 2,
+        marginX: [null,2.5],
         marginTop: 3,
         width: '300px',
         height: '500px',
@@ -31,6 +31,9 @@ export const CardItem: React.FC<ItemByProps> = ({ item }) => {
         cursor: 'pointer',
         boxShadow: '0px 2px 5px rgba(0, 0, 0, .1)',
         '&:hover': {
+          boxShadow: '0px 2px 15px rgba(0, 0, 0, .2)',
+        },
+        '&:focus': {
           boxShadow: '0px 2px 15px rgba(0, 0, 0, .2)',
         }
       }}>
@@ -57,7 +60,7 @@ export const CardItem: React.FC<ItemByProps> = ({ item }) => {
           sx={{ backgroundColor: 'rgba(169, 207, 70, .7)', borderRadius: 3, margin: .5 }}
         >
           <Stack sx={{ width: '100%', textAlign: 'center' }}>
-            <Typography variant='h5' sx={{ color: 'white' }}>{item.name}</Typography>
+            <Typography variant='h6' sx={{ color: 'white' }}>{item.name}</Typography>
             <Typography variant='h6'><b>{formatToRealStr(Number(item.price))}</b></Typography>
             <Stack sx={{ width: '100%' }} alignItems='flex-end'>
               <OpenInFull sx={{ color: 'white', paddingRight: 1, paddingBottom: 1 }} />

@@ -1,19 +1,28 @@
 import { SeeSaleCard } from '../'
 import { Close } from '@mui/icons-material'
+import { useIsMobile } from '../../../../../../hooks'
 import { ModalProps } from '../../../../../../types/util'
-import { CartItem, SaleByProps } from '../../../../../../types/item'
 import { Box, Drawer, Stack, Typography } from '@mui/material'
+import { CartItem, SaleByProps } from '../../../../../../types/item'
 
 export type SeeSaleModalProps = ModalProps & SaleByProps
 
 export const SeeSale: React.FC<SeeSaleModalProps> = ({ sale, isOpen, closeModal }) => {
+  const isMobile = useIsMobile()
 
   return (
     <Drawer
       anchor='bottom'
       variant='temporary'
       open={isOpen}
-      PaperProps={{ sx: { maxHeight: '90vh', height: '90vh', padding: 2, borderRadius: 3, cursor: 'pointer' } }}
+      PaperProps={{ sx: {
+        paddingY: 2,
+        height: '90vh',
+        maxHeight: '90vh',
+        paddingX: isMobile ? 1 : 4,
+        borderTopLeftRadius: '20px',
+        borderTopRightRadius: '20px',
+      } }}
     >
 
       <Stack alignItems='flex-end'>
@@ -26,7 +35,7 @@ export const SeeSale: React.FC<SeeSaleModalProps> = ({ sale, isOpen, closeModal 
       <Typography variant='h6' sx={{ color: '#9CADBF' }}><b>E-mail:</b> {sale.account.email}</Typography>
       <Typography variant='h6' sx={{ color: '#9CADBF' }}><b>Endereço:</b> {sale.account.address}, {sale.account.district} - {sale.account.houseNumber}</Typography>
 
-      <Stack mt={2} sx={{ flexWrap: 'wrap' }} justifyContent='space-between' direction='row' alignItems='flex-start'>
+      <Stack mt={2} sx={{ flexWrap: 'wrap' }} direction='row' alignItems='flex-start'>
         {sale.items.map((item: CartItem)=>(
           <SeeSaleCard item={item} />
         ))}

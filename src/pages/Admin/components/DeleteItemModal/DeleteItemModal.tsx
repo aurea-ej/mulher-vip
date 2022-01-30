@@ -1,9 +1,10 @@
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
-import { useMemo, useEffect, useState } from 'react'
 import { Close } from '@mui/icons-material'
 import { Item } from '../../../../types/item'
+import { useIsMobile } from '../../../../hooks'
 import { ModalProps } from '../../../../types/util'
+import { useMemo, useEffect, useState } from 'react'
 import { getDatabase, ref, remove } from 'firebase/database'
 import { HfField, SelectInput } from '../../../../components'
 import { getProducts } from '../../../../hooks/useGetProducts'
@@ -16,6 +17,7 @@ type InsertItemFormValues = Partial<Item> & {
 
 export const DeleteItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
   const db = getDatabase()
+  const isMobile = useIsMobile()
   const { enqueueSnackbar } = useSnackbar()
   const [infosChange, toggleInfosChange] = useState<boolean>(false)
   const { storeState: { items }, operations: { updateItems } } = useItemsStore()
@@ -61,7 +63,14 @@ export const DeleteItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
       variant='temporary'
       anchor='bottom'
       open={isOpen}
-      PaperProps={{ sx: { maxHeight: '90vh', height: '90vh', padding: 2, borderRadius: 3 } }}
+      PaperProps={{ sx: {
+        paddingY: 2,
+        height: '90vh',
+        maxHeight: '90vh',
+        paddingX: isMobile ? 1 : 4,
+        borderTopLeftRadius: '20px',
+        borderTopRightRadius: '20px',
+      } }}
     >
       <Stack alignItems='flex-end'>
         <Close sx={{ cursor: 'pointer', marginX: 1 }} onClick={closeModal} />
