@@ -1,5 +1,6 @@
 export * from './HfField'
 export * from './CardItem'
+export * from './ItemCard'
 export * from './TextInput'
 export * from './Container'
 export * from './EmptyPage'

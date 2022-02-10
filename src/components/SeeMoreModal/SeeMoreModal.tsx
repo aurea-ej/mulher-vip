@@ -92,7 +92,7 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
 
   const { control, watch } = useForm()
 
-  const note = watch('note')
+  const note = watch('note') || ''
 
   const decreaseAmount = () => {
     if(amount > 1)

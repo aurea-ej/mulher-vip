@@ -9,7 +9,7 @@ import { Box, Button, Stack } from '@mui/material'
 import { getUserInfos } from '../../hooks/useUseInfo'
 import { useAccountStore } from '../../store/account/reducer'
 import { useCartItemsStore } from '../../store/cartItems/reducer'
-import { Container, SmallCardItem, EmptyPage } from '../../components'
+import { Container, EmptyPage, ItemCard } from '../../components'
 import { getDatabase, ref, child, get, set, push, remove } from 'firebase/database'
 
 export const Cart: React.FC = () => {
@@ -110,11 +110,11 @@ export const Cart: React.FC = () => {
   }
 
   return (
-    <Box sx={{ backgroundColor: '#3b3b3b' }}>
+    <Box>
       <Container>
         {CartItems && (
-          <Stack alignItems='center'>
-            {CartItems.map(item => <SmallCardItem item={item} />)}
+          <Stack sx={{  }}>
+            {CartItems.map(item => <ItemCard item={item} />)}
           </Stack>
         )}
         <Button onClick={finishBuy}>Concluir compra</Button>
