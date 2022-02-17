@@ -46,3 +46,10 @@ export interface SalesByProps {
   sales: Sale[]
 }
 
+export enum Size {
+  P = 'P',
+  M = 'M',
+  G = 'G',
+  TU = 'Tamanho único',
+  PS = 'Plus size',
+}

@@ -2,14 +2,14 @@ import * as yup from 'yup'
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { Close } from '@mui/icons-material'
-import { Item } from '../../../../types/item'
+import { Item, Size } from '../../../../types/item'
 import { useIsMobile } from '../../../../hooks'
 import { ModalProps } from '../../../../types/util'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { getDatabase, ref, set, child, push } from 'firebase/database'
 import { categoryOptions, codeOptions } from '../../../../utils/options'
 import { HfField, TextInput, SelectInput } from '../../../../components'
-import { Drawer, Stack, Typography, Button } from '@mui/material'
+import { Drawer, Stack, Typography, Button, FormGroup, FormControlLabel, Checkbox, FormControl } from '@mui/material'
 
 type InsertItemFormValues = Partial<Item>
 
@@ -86,12 +86,12 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
 
       <Stack>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack>
+          <Stack spacing={2}>
             <HfField
               name='name'
               inputType='flat'
               control={control}
-              label='Nome'
+              placeholder='Nome'
               component={TextInput}
               errorMessage={errors.name?.message}
             />
@@ -99,15 +99,15 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               name='description'
               inputType='flat'
               control={control}
-              label='Descrição'
               component={TextInput}
+              placeholder='Descrição'
               errorMessage={errors.description?.message}
             />
             <HfField
               name='imageUrl'
               inputType='flat'
               control={control}
-              label='Url'
+              placeholder='Url'
               component={TextInput}
               errorMessage={errors.imageUrl?.message}
             />
@@ -115,7 +115,7 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               name='price'
               inputType='flat'
               control={control}
-              label='Preço'
+              placeholder='Preço'
               component={TextInput}
               errorMessage={errors.price?.message}
             />
@@ -123,7 +123,7 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               name='category'
               inputType='flat'
               control={control}
-              label='Categoria'
+              placeholder='Categoria'
               options={categoryOptions}
               component={SelectInput}
               errorMessage={errors.category?.message}
@@ -133,7 +133,7 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               inputType='flat'
               control={control}
               options={codeOptions}
-              label='Código'
+              placeholder='Código'
               component={SelectInput}
               errorMessage={errors.code?.message}
             />
@@ -142,10 +142,22 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               inputType='flat'
               control={control}
               options={isAvailableOptions}
-              label='Disponibilidade'
+              placeholder='Disponibilidade'
               component={SelectInput}
               errorMessage={errors.isAvailable?.message}
             />
+            <Stack>
+              <Typography>Tamanhos disponíveis:</Typography>
+              <FormControl onChange={(e)=>console.log(e)}>
+                <FormGroup sx={{ display: 'flex' }} row>
+                  <FormControlLabel control={<Checkbox defaultChecked />} label={Size.P} />
+                  <FormControlLabel control={<Checkbox />} label={Size.M} />
+                  <FormControlLabel control={<Checkbox />} label={Size.G} />
+                  <FormControlLabel control={<Checkbox />} label={Size.PS} />
+                  <FormControlLabel control={<Checkbox />} label={Size.TU} />
+                </FormGroup>
+              </FormControl>
+            </Stack>
             <Button type='submit'>Inserir</Button>
           </Stack>
         </form>
