@@ -11,6 +11,7 @@ import { useUserStore } from '../../store/user/reducer'
 import { useAccountStore } from '../../store/account/reducer'
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
 import { Box, CircularProgress, Grid, Stack, Typography } from '@mui/material'
+import { formatDateTime } from '../../utils/format'
 
 export const Account: React.FC = () => {
   const auth = getAuth(app)
@@ -81,6 +82,9 @@ export const Account: React.FC = () => {
           </Grid>
           <Grid item xs={4}>
             <ProfileCard title='E-mail' value={account!.email} />
+          </Grid>
+          <Grid item xs={4}>
+            <ProfileCard title='Data de nascimento' value={formatDateTime(new Date(account!.birthDate!))} />
           </Grid>
         </Grid>
         <Box

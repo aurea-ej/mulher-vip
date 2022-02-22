@@ -34,6 +34,7 @@ export interface Account {
   address: string
   district: string
   isAdmin: boolean
+  birthDate: Date | string | null
   houseNumber: string
 }
 

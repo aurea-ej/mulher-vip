@@ -149,18 +149,6 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
             </Stack>
             <Stack direction={isMobile ? 'column' : 'row'} justifyContent='space-between'>
               <Stack justifyContent='space-between'>
-                <InputLabel id='payment-method-label'>Forma de pagamento</InputLabel>
-                <Select
-                  id='payment-method'
-                  label='Forma de pagamento'
-                  value={selectedPaymentOption}
-                  labelId='payment-method-label'
-                  onChange={(option)=>setSelectedPaymentOption(option.target.value as unknown as selectOptionProps)}
-                >
-                  {selectOption.map((option, key) => <MenuItem key={key} value={option.value}>{option.label}</MenuItem>)}
-                </Select>
-              </Stack>
-              <Stack justifyContent='space-between'>
                 <InputLabel id='payment-method-label'>Tamanho</InputLabel>
                 <Select
                   id='payment-method'

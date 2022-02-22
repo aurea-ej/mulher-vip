@@ -25,7 +25,7 @@ export interface ItemByProps {
 export interface CartItem extends Item {
   note: string,
   amount: number,
-  paymentMethod: keyof typeof PaymentMethod
+  // paymentMethod: keyof typeof PaymentMethod
 }
 
 export interface CartItemByProps {
@@ -36,7 +36,9 @@ export interface CartItemsByProps {
   items: CartItem[]
 }
 
-export type Sale = CartItemsByProps & AccountByProps
+export type Sale = CartItemsByProps & AccountByProps & {
+  paymentMethod: keyof typeof PaymentMethod
+}
 
 export interface SaleByProps {
   sale: Sale

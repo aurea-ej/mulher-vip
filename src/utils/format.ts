@@ -1,5 +1,6 @@
 import React from 'react'
 import numeral from 'numeral'
+import * as dateFns from 'date-fns'
 
 export const formatToRealStr = (amount: number, fromCents = true) => {
   const valueToFormat = fromCents ? numeral(amount * 100).divide(100) : numeral(amount * 100)
@@ -23,3 +24,10 @@ export const useDeviceDetect = () => {
 
   return { isMobile }
 }
+
+export const formatDateTime = (date: Date | number, separator?: string) => {
+  const format = separator ? `dd/MM/yyyy [${separator}] HH:mm` : 'dd/MM/yyyy'
+
+  return dateFns.format(date, format)
+}
+

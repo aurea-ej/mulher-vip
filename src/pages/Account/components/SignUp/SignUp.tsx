@@ -12,7 +12,7 @@ import { getDatabase, ref, set } from 'firebase/database'
 import { useIsMobile } from '../../../../hooks/useIsMobile'
 import { useUserStore } from '../../../../store/user/reducer'
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
-import { Container, HfField, TextInput, PasswordInput } from '../../../../components'
+import { Container, HfField, TextInput, PasswordInput, DateInput } from '../../../../components'
 
 type formValuesType = Omit<Account, 'isAdmin' | 'id'> & { senha: string | null }
 
@@ -34,6 +34,7 @@ export const SignUp: React.FC = () => {
     address: '',
     district: '',
     houseNumber: '',
+    birthDate: null,
   }
 
   const validationSchema: yup.SchemaOf<formValuesType> = yup.object().shape({
@@ -46,40 +47,32 @@ export const SignUp: React.FC = () => {
     district: yup.string().required('Campo obrigatório'),
     houseNumber: yup.string().required('Campo obrigatório'),
     email: yup.string().required('Campo obrigatório').email('Email inválido'),
+    birthDate: yup.date().required('Campo obrigatório'),
   })
 
   const onSubmit = (formValues: formValuesType ) => {
-    createUserWithEmailAndPassword(auth, formValues.email, formValues.senha!)
-      .then((userCredential) => {
-        const user = userCredential.user as unknown as User
-        formValues.senha = null
-        setUserInfos(user, formValues)
-        history.push('account')
-      })
-      .catch(() => {
-        return enqueueSnackbar('Ops! ocorreu um erro ao realizar o cadastro', { 
-          variant: 'error',
-          autoHideDuration: 3000
+    try {
+      createUserWithEmailAndPassword(auth, formValues.email, formValues.senha!)
+        .then((userCredential) => {
+          const user = userCredential.user as unknown as User
+          formValues.senha = null
+          formValues.birthDate = formValues.birthDate!.toString()
+          set(ref(db, 'userInfo/' + user.uid), { ...formValues, id: user.uid, isAdmin: false })
+            .then(()=>{
+              updateUser(user)
+              history.push('account')
+              return enqueueSnackbar('Cadastro realizado com sucesso', { 
+                variant: 'success',
+                autoHideDuration: 3000
+              })
+            })
         })
+    } catch (error) {
+      return enqueueSnackbar('Ops! ocorreu um erro ao realizar o cadastro', { 
+        variant: 'error',
+        autoHideDuration: 3000
       })
-  }
-
-  const setUserInfos = (user: User, formValues: formValuesType ) => {
-
-    set(ref(db, 'userInfo/' + user.uid), { ...formValues, id: user.uid, isAdmin: false })
-      .then(()=>{
-        updateUser(user)
-        return enqueueSnackbar('Cadastro realizado com sucesso', { 
-          variant: 'success',
-          autoHideDuration: 3000
-        })
-      })
-      .catch(() => {
-        return enqueueSnackbar('Ops! ocorreu um erro ao realizar o cadastro', { 
-          variant: 'error',
-          autoHideDuration: 3000
-        })
-      })
+    }
   }
 
   const { control, handleSubmit, formState: { errors } } = useForm<formValuesType>({
@@ -97,7 +90,7 @@ export const SignUp: React.FC = () => {
                 name='email'
                 inputType='flat'
                 control={control}
-                label='Seu e-mail'
+                placeholder='Seu e-mail'
                 component={TextInput}
                 errorMessage={errors.email?.message}
               />
@@ -105,7 +98,7 @@ export const SignUp: React.FC = () => {
             <Grid item md={isMobile ? 12 : 4} lg={isMobile ? 12 : 4} xs={isMobile ? 12 : 4}>
               <HfField
                 name='senha'
-                label='Senha'
+                placeholder='Senha'
                 inputType='flat'
                 control={control}
                 component={PasswordInput}
@@ -117,7 +110,7 @@ export const SignUp: React.FC = () => {
                 name='name'
                 inputType='flat'
                 control={control}
-                label='Seu nome'
+                placeholder='Seu nome'
                 component={TextInput}
                 errorMessage={errors.name?.message}
               />
@@ -127,7 +120,7 @@ export const SignUp: React.FC = () => {
                 name='phone'
                 inputType='flat'
                 control={control}
-                label='Telefone'
+                placeholder='Telefone'
                 component={TextInput}
                 errorMessage={errors.phone?.message}
               />
@@ -137,7 +130,7 @@ export const SignUp: React.FC = () => {
                 name='city'
                 inputType='flat'
                 control={control}
-                label='Cidade'
+                placeholder='Cidade'
                 component={TextInput}
                 errorMessage={errors.city?.message}
               />
@@ -147,7 +140,7 @@ export const SignUp: React.FC = () => {
                 name='cep'
                 inputType='flat'
                 control={control}
-                label='CEP'
+                placeholder='CEP'
                 component={TextInput}
                 errorMessage={errors.cep?.message}
               />
@@ -157,7 +150,7 @@ export const SignUp: React.FC = () => {
                 name='address'
                 inputType='flat'
                 control={control}
-                label='Rua'
+                placeholder='Rua'
                 component={TextInput}
                 errorMessage={errors.address?.message}
               />
@@ -167,7 +160,7 @@ export const SignUp: React.FC = () => {
                 name='district'
                 inputType='flat'
                 control={control}
-                label='Bairro'
+                placeholder='Bairro'
                 component={TextInput}
                 errorMessage={errors.district?.message}
               />
@@ -177,9 +170,19 @@ export const SignUp: React.FC = () => {
                 name='houseNumber'
                 inputType='flat'
                 control={control}
-                label='Número da casa'
+                placeholder='Número da casa'
                 component={TextInput}
                 errorMessage={errors.houseNumber?.message}
+              />
+            </Grid>
+            <Grid item md={isMobile ? 12 : 4} lg={isMobile ? 12 : 4} xs={isMobile ? 12 : 4}>
+              <HfField
+                name='birthDate'
+                inputType='flat'
+                control={control}
+                component={DateInput}
+                label='Data de nascimento'
+                errorMessage={errors.birthDate?.message}
               />
             </Grid>
           </Grid>

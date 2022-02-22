@@ -69,6 +69,7 @@ export const TrackSales: React.FC = () => {
               <Typography><b>Cliente:</b> {sale.account.name}</Typography>
               <Typography><b>Telefone:</b> {sale.account.phone}</Typography>
               <Typography><b>Endereço:</b> {sale.account.address}, {sale.account.district} - {sale.account.houseNumber}</Typography>
+              {/* <Typography><b>Pagamento:</b> {sale.items}</Typography> */}
             </Stack>
             <Stack>
               <Box
