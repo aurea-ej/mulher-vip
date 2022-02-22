@@ -9,6 +9,7 @@ import { app } from '../../../../FIREBASECONFIG.js'
 import { useModal } from '../../../../hooks/useModal'
 import { getDatabase, ref, child, get } from 'firebase/database'
 import { CircularProgress, Stack, Typography } from '@mui/material'
+import { PaymentMethodTitle } from '../../../../types/payment'
 
 export const TrackSales: React.FC = () => {
   const db = getDatabase(app)
@@ -69,7 +70,7 @@ export const TrackSales: React.FC = () => {
               <Typography><b>Cliente:</b> {sale.account.name}</Typography>
               <Typography><b>Telefone:</b> {sale.account.phone}</Typography>
               <Typography><b>Endereço:</b> {sale.account.address}, {sale.account.district} - {sale.account.houseNumber}</Typography>
-              {/* <Typography><b>Pagamento:</b> {sale.items}</Typography> */}
+              <Typography><b>Pagamento:</b> {PaymentMethodTitle[sale.paymentMethod]}</Typography>
             </Stack>
             <Stack>
               <Box

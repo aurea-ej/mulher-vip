@@ -4,6 +4,7 @@ import { useIsMobile } from '../../../../../../hooks'
 import { ModalProps } from '../../../../../../types/util'
 import { Box, Drawer, Stack, Typography } from '@mui/material'
 import { CartItem, SaleByProps } from '../../../../../../types/item'
+import { PaymentMethodTitle } from '../../../../../../types/payment'
 
 export type SeeSaleModalProps = ModalProps & SaleByProps
 
@@ -34,6 +35,7 @@ export const SeeSale: React.FC<SeeSaleModalProps> = ({ sale, isOpen, closeModal 
       <Typography variant='h6' sx={{ color: '#9CADBF' }}><b>Telefone:</b> {sale.account.phone}</Typography>
       <Typography variant='h6' sx={{ color: '#9CADBF' }}><b>E-mail:</b> {sale.account.email}</Typography>
       <Typography variant='h6' sx={{ color: '#9CADBF' }}><b>Endereço:</b> {sale.account.address}, {sale.account.district} - {sale.account.houseNumber}</Typography>
+      <Typography variant='h6' sx={{ color: '#9CADBF' }}><b>Pagamento:</b> {PaymentMethodTitle[sale.paymentMethod]}</Typography>
 
       <Stack mt={2} sx={{ flexWrap: 'wrap' }} direction='row' alignItems='flex-start'>
         {sale.items.map((item: CartItem)=>(
