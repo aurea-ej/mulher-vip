@@ -1,11 +1,11 @@
 import React from 'react'
-import { Button as MuiButton, Box } from '@mui/material'
+import { Button as MuiButton, Box, ButtonProps } from '@mui/material'
 
-interface ButtonProps {
+interface CustomButtonProps {
   variant?: 'primary' | 'secondary'
 }
 
-export const Button: React.FC<ButtonProps> = ((props) => {
+export const Button: React.FC<CustomButtonProps & Omit<ButtonProps, 'variant'>> = ((props) => {
   const { children, variant, ...rest } = props
 
   if(variant === 'primary') {

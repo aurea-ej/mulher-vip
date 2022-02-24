@@ -66,28 +66,21 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
   }
 
   const addToCart = (items: CartItem[] | []) => {
-    if(selectedPaymentOption){
-      const cartItem = { ...item, paymentMethod:  selectedPaymentOption, amount, note }
-      set(ref(db, 'cart/' + account!.id), items.length > 0 ? [...items, cartItem] : [cartItem])
-        .then(()=>{
-          onClose()
-          return enqueueSnackbar('Item adicionado ao carrinho', { 
-            variant: 'success',
-            autoHideDuration: 3000
-          })
+    const cartItem = { ...item, amount, note }
+    set(ref(db, 'cart/' + account!.id), items.length > 0 ? [...items, cartItem] : [cartItem])
+      .then(()=>{
+        onClose()
+        return enqueueSnackbar('Item adicionado ao carrinho', { 
+          variant: 'success',
+          autoHideDuration: 3000
         })
-        .catch(() => {
-          return enqueueSnackbar('Ops! ocorreu um erro ao realizar o cadastro', { 
-            variant: 'error',
-            autoHideDuration: 3000
-          })
+      })
+      .catch(() => {
+        return enqueueSnackbar('Ops! ocorreu um erro ao realizar o cadastro', { 
+          variant: 'error',
+          autoHideDuration: 3000
         })
-      return
-    }
-    return enqueueSnackbar('Você precisa informar um método de pagamento', { 
-      variant: 'error',
-      autoHideDuration: 3000
-    })
+      })
   }
 
   const { control, watch } = useForm()

@@ -8,15 +8,17 @@ import { CartItem, Sale } from '../../types/item'
 import { PaymentMethod } from '../../types/payment'
 import { formatToRealStr } from '../../utils/format'
 import { getUserInfos } from '../../hooks/useUseInfo'
+import { useIsMobile } from '../../hooks/useIsMobile'
 import { useAccountStore } from '../../store/account/reducer'
 import { useCartItemsStore } from '../../store/cartItems/reducer'
-import { Box, Button, Stack, Typography, Select, MenuItem } from '@mui/material'
+import { Stack, Typography, Select, MenuItem } from '@mui/material'
 import { getDatabase, ref, child, get, set, push, remove } from 'firebase/database'
-import { Container, EmptyPage, FullScreenItemCard, selectOptionProps } from '../../components'
+import { Container, EmptyPage, FullScreenItemCard, selectOptionProps, Button } from '../../components'
 
 export const Cart: React.FC = () => {
   const db = getDatabase(app)
   const history = useHistory()
+  const isMobile = useIsMobile()
   const { enqueueSnackbar } = useSnackbar()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { storeState: { account }, operations: { updateAccount } } = useAccountStore()
@@ -130,7 +132,7 @@ export const Cart: React.FC = () => {
 
   return (  
     <Container>
-      <Stack sx={{ width: '50vw' }}>
+      <Stack sx={{ width: isMobile ? '80vw' : '50vw' }}>
         {CartItems && (
           <Stack sx={{ width: '100%' }} alignItems='center' justifyContent='center'>
             {CartItems.map((item, index) => {
@@ -159,36 +161,15 @@ export const Cart: React.FC = () => {
             {selectOption.map((option, key) => <MenuItem key={key} value={option.value}>{option.label}</MenuItem>)}
           </Select>
         </Stack>
-        <Stack mt={8} direction='row' justifyContent='space-between' sx={{ width: '100%' }}>
-          <Box
-            type='submit'
-            component={Button}
+        <Stack mt={8} spacing={2} direction={isMobile ? 'column' :'row'} justifyContent='space-between' sx={{ width: '100%' }}>
+          <Button
+            variant='secondary'
             onClick={clearCart}
-            sx={{
-              padding: 2,
-              color: '#a9cf46',
-              borderRadius: 3,
-              cursor: 'pointer',
-              // width: isMobile ? '80vw' : 'auto',
-              '&:hover': { backgroundColor: 'white' },
-              boxShadow: '0px 2px 10px rgba(0, 0, 0, .1)'
-            }}
-          >Limpar carrinho</Box>
-          <Box
-            type='submit'
-            component={Button}
+          >Limpar carrinho</Button>
+          <Button
+            variant='primary'
             onClick={finishBuy}
-            sx={{
-              padding: 2,
-              color: 'white',
-              borderRadius: 3,
-              cursor: 'pointer',
-              bgcolor: '#a9cf46',
-              // width: isMobile ? '80vw' : 'auto',
-              '&:hover': { backgroundColor: '#a9cf46' },
-              boxShadow: '0px 2px 10px rgba(0, 0, 0, .1)'
-            }}
-          >Concluir compra</Box>
+          >Concluir compra</Button>
         </Stack>
         {!CartItems && <div>Sem itens</div>}
       </Stack>
