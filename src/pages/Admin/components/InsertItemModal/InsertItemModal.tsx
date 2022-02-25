@@ -45,6 +45,7 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
     name: yup.string().required('Campo obrigatório'),
     price: yup.number().required('Campo obrigatório'),
     id: yup.string(),
+    arraySize: yup.mixed(),
     isAvailable: yup.mixed().test('','Opção inválida',(item) => item > 0).required(),
     sizeP: yup.boolean(),
     sizeM: yup.boolean(),
@@ -169,6 +170,7 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               <FormControl>
                 <FormGroup sx={{ display: 'flex' }} row>
                   <HfField
+                    defaultChecked
                     component={CheckBox}
                     control={control}
                     checked={sizeP}
@@ -208,11 +210,6 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
                     label={Size.TU}
                     color='secondary'
                   />
-                  {/* <FormControlLabel name='sizeP' checked={sizeP} control={<Checkbox />} label={Size.P} />
-                  <FormControlLabel name='sizeM' checked={sizeM} control={<Checkbox />} label={Size.M} />
-                  <FormControlLabel name='sizeG' checked={sizeG} control={<Checkbox />} label={Size.G} />
-                  <FormControlLabel name='sizePS' checked={sizePS} control={<Checkbox />} label={Size.PS} />
-                  <FormControlLabel name='sizeTU' checked={sizeTU} control={<Checkbox />} label={Size.TU} /> */}
                 </FormGroup>
               </FormControl>
             </Stack>

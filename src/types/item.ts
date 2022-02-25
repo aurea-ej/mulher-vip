@@ -11,11 +11,12 @@ export interface Item {
   name: string
   price: string | number
   imageUrl: string
-  // size?: sizeItem[]
   description: string
   isAvailable: any //change this later
   category: keyof typeof Categories
   code: keyof typeof AllItemsByCategories
+  arraySize?: any
+  // size?: [boolean, boolean, boolean, boolean, boolean]
 }
 
 export interface ItemByProps {
@@ -25,7 +26,7 @@ export interface ItemByProps {
 export interface CartItem extends Item {
   note: string,
   amount: number,
-  // paymentMethod: keyof typeof PaymentMethod
+  selectedSize: keyof typeof Size
 }
 
 export interface CartItemByProps {

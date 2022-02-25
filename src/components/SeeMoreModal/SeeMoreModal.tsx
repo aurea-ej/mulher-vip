@@ -1,15 +1,16 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { HfField, TextInput } from '..'
+import { Size } from '../../types/item'
 import { useForm } from 'react-hook-form'
 import { useIsMobile } from '../../hooks'
+import { Button } from '../../components'
 import { Close } from '@mui/icons-material'
 import { CartItem, Item } from '../../types/item'
-import { PaymentMethod } from '../../types/payment'
 import { formatToRealStr } from '../../utils/format'
 import { useAccountStore } from '../../store/account/reducer'
 import { getDatabase, ref, set, child, get } from 'firebase/database'
-import { Drawer, Avatar, Stack, Typography, Box, Select, MenuItem, InputLabel } from '@mui/material'
+import { Drawer, Avatar, Stack, Typography, Box,InputLabel, Grid } from '@mui/material'
 
 export interface SeeMoreModalProps {
   item: Item
@@ -22,13 +23,6 @@ export interface selectOptionProps {
   label: string
 }
 
-const selectOption: selectOptionProps[] = [
-  { value: '', label: '---' },
-  { value: PaymentMethod.PIX, label: 'PIX' },
-  { value: PaymentMethod.MONEY, label: 'DINHEIRO' },
-  { value: PaymentMethod.CART_DEBIT, label: 'CARTÃO DE CRÉDITO' },
-  { value: PaymentMethod.CART_CREDIT, label: 'CARTÃO DE DÉBITO' },
-]
 
 export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClose }) => {
   const db = getDatabase()
@@ -36,8 +30,7 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
   const { enqueueSnackbar } = useSnackbar()
   const [amount, setAmount] = useState<number>(1)
   const { storeState: { account } } = useAccountStore()
-  // const [selectedSizeOption, setSelectedSizeOption] = useState<selectOptionProps>()
-  const [selectedPaymentOption, setSelectedPaymentOption] = useState<selectOptionProps>()
+  const [isSelectedSize, setIsSelectedSize] = useState<number>()
 
   const getCartProducts = () => {
     if(account){
@@ -65,8 +58,32 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
     })
   }
 
+  const selectedSize = useMemo(()=>{
+    switch (isSelectedSize) {
+      case 0:
+        return Size.P
+      case 1:
+        return Size.M
+      case 2:
+        return Size.G
+      case 3:
+        return Size.PS
+      case 4:
+        return Size.TU
+      default:
+        return null
+    }
+    // switch (isSelectedSize)
+  },[isSelectedSize])
+
   const addToCart = (items: CartItem[] | []) => {
-    const cartItem = { ...item, amount, note }
+    if(selectedSize === null) {
+      return enqueueSnackbar('Você precisa escolher uma opção de tamanho', { 
+        variant: 'error',
+        autoHideDuration: 3000
+      })
+    }
+    const cartItem = { ...item, amount, note, selectedSize }
     set(ref(db, 'cart/' + account!.id), items.length > 0 ? [...items, cartItem] : [cartItem])
       .then(()=>{
         onClose()
@@ -91,6 +108,8 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
     if(amount > 1)
       setAmount(amount - 1)
   }
+  
+  const testSizeLabel = ['P','M','G','PS','TU']
 
   return (
     <Drawer
@@ -141,9 +160,30 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
               />
             </Stack>
             <Stack direction={isMobile ? 'column' : 'row'} justifyContent='space-between'>
-              <Stack justifyContent='space-between'>
-                <InputLabel id='payment-method-label'>Tamanho</InputLabel>
-                <Select
+              <Stack spacing={1} justifyContent='space-between'>
+                <InputLabel id='payment-method-label'>Selecionar Tamanho</InputLabel>
+                <Grid spacing={1} container>
+                  {item.arraySize && item.arraySize.map((isSizeAvailable: boolean, index: number) => {
+                    return (
+                      <Grid item xs={4} md={4} lg={4}>
+                        <Button
+                          sx={{
+                            padding: 1,
+                            bgcolor: index === isSelectedSize ? 'rgba(169, 207, 70, .7)' : 'initial',
+                            color: index === isSelectedSize ? 'white' : 'initial',
+                            '&:hover': { backgroundColor: index === isSelectedSize ? 'rgba(169, 207, 70, .7)' : 'initial', },
+                          }}
+                          variant='secondary'
+                          disabled={!isSizeAvailable}
+                          onClick={()=>setIsSelectedSize(index)}
+                        >
+                          <Typography>{testSizeLabel[index]}</Typography>
+                        </Button>
+                      </Grid>
+                    )
+                  })}
+                </Grid>
+                {/* <Select
                   id='payment-method'
                   label='Forma de pagamento'
                   value={selectedPaymentOption}
@@ -151,7 +191,7 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
                   onChange={(option)=>setSelectedPaymentOption(option.target.value as unknown as selectOptionProps)}
                 >
                   {selectOption.map((option, key) => <MenuItem key={key} value={option.value}>{option.label}</MenuItem>)}
-                </Select>
+                </Select> */}
               </Stack>
               <Stack justifyContent={isMobile ? 'center' : 'flex-start'} sx={{ marginTop: isMobile ? 3 : 0 }} direction='row' alignItems='center'>
                 <Stack

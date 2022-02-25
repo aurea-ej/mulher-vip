@@ -37,7 +37,7 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
     name: yup.string().required('Campo obrigatório'),
     price: yup.number().required('Campo obrigatório'),
     id: yup.string(),
-    // size: yup.mixed(),
+    arraySize: yup.mixed(),
     isAvailable: yup.mixed().test('','Opção inválida',(item) => item > 0).required('Campo obrigatório'),
     item: yup.mixed()
   })

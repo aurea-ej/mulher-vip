@@ -1,8 +1,10 @@
 
+import { useIsMobile } from '../../hooks'
 import { Stack, Avatar, Typography } from '@mui/material'
 import { CartItemByProps } from '../../types/item'
 
 export const FullScreenItemCard: React.FC<CartItemByProps> = ({ item }) => {
+  const isMobile = useIsMobile()
   return (
     <Stack
       direction='row'
@@ -21,8 +23,23 @@ export const FullScreenItemCard: React.FC<CartItemByProps> = ({ item }) => {
         <Avatar variant='circular' sx={{ height: '60px', width: '60px', marginRight: 2 }} src={item.imageUrl} />
         <Typography><b>{item.name}</b></Typography>
       </Stack>
-      <Stack mt={1}>
-        <Typography>{item.amount} unidades: <b style={{ color: '#a9cf46' }}>R$ {(item.amount * Number(item.price)).toFixed(2)}</b></Typography>
+      <Stack>
+        {isMobile ? (
+          <Stack sx={{ marginLeft: 1.5 }} alignItems='flex-end'>
+            <Typography sx={{ fontSize: '14px' }}>Tam. {item.selectedSize}</Typography>
+            <Typography sx={{ textAlign: 'right', fontSize: '14px', whiteSpace: 'nowrap' }}>
+              {item.amount} unidade(s)
+            </Typography>
+            <Typography sx={{ textAlign: 'right', fontSize: '14px', whiteSpace: 'nowrap' }}>
+              <b style={{ color: '#a9cf46' }}>R$ {(item.amount * Number(item.price)).toFixed(2)}</b>
+            </Typography>
+          </Stack>
+        ):(
+          <Typography>
+            <Typography sx={{ fontSize: '14px' }}>Tam. {item.selectedSize}</Typography>
+            {item.amount} unidades: <b style={{ color: '#a9cf46' }}>R$ {(item.amount * Number(item.price)).toFixed(2)}</b>
+          </Typography>
+        )}
       </Stack>
     </Stack>
   )
