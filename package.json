@@ -44,6 +44,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "tsc-check": "tsc -version & tsc --noEmit --skipLibCheck -p .",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

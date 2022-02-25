@@ -15,7 +15,16 @@ import { categoryOptions, codeOptions } from '../../../../utils/options'
 import { Drawer, Stack, Typography, FormControl, FormGroup } from '@mui/material'
 import { HfField, TextInput, SelectInput, Button, CheckBox } from '../../../../components'
 
-type InsertItemFormValues = Partial<Item> & {
+
+type SizeOptions = {
+  sizeP?: boolean
+  sizeM?: boolean
+  sizeG?: boolean
+  sizePS?: boolean
+  sizeTU?: boolean
+}
+
+type InsertItemFormValues = Partial<Item> & SizeOptions & {
   item?: any
 }
 
@@ -40,7 +49,12 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
     id: yup.string(),
     arraySize: yup.mixed(),
     isAvailable: yup.mixed().test('','Opção inválida',(item) => item > 0).required('Campo obrigatório'),
-    item: yup.mixed()
+    item: yup.mixed(),
+    sizeP: yup.boolean(),
+    sizeM: yup.boolean(),
+    sizeG: yup.boolean(),
+    sizePS: yup.boolean(),
+    sizeTU: yup.boolean(),
   })
 
   const { control, handleSubmit, watch, reset, formState: { errors }, setValue } = useForm<InsertItemFormValues>({
@@ -64,7 +78,9 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
   const sizeTU = watch('sizeTU')
 
   const onSubmit = (formValues: InsertItemFormValues ) => {
-    update(ref(db, '/products/' + selectedItemWatch), formValues ).then(()=>{
+    const arraySize = [!!sizeP, !!sizeM, !!sizeG, !!sizePS, !!sizeTU]
+
+    update(ref(db, '/products/' + selectedItemWatch), { ...formValues, arraySize } ).then(()=>{
       return enqueueSnackbar('Item atualizado com sucesso!', {
         variant: 'success',
         autoHideDuration: 3000
