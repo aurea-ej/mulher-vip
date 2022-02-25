@@ -5,6 +5,7 @@ import { Size } from '../../types/item'
 import { useForm } from 'react-hook-form'
 import { useIsMobile } from '../../hooks'
 import { Button } from '../../components'
+import { useHistory } from 'react-router'
 import { Close } from '@mui/icons-material'
 import { CartItem, Item } from '../../types/item'
 import { formatToRealStr } from '../../utils/format'
@@ -26,6 +27,7 @@ export interface selectOptionProps {
 
 export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClose }) => {
   const db = getDatabase()
+  const history = useHistory()
   const isMobile = useIsMobile()
   const { enqueueSnackbar } = useSnackbar()
   const [amount, setAmount] = useState<number>(1)
@@ -52,10 +54,11 @@ export const SeeMoreModal: React.FC<SeeMoreModalProps> = ({ item, isOpen, onClos
       })
       return
     }
-    return enqueueSnackbar('Você precisa estar logado para adicionar itens', { 
+    enqueueSnackbar('Você precisa estar logado para adicionar itens', { 
       variant: 'error',
       autoHideDuration: 3000
     })
+    history.push('/signUp')
   }
 
   const selectedSize = useMemo(()=>{

@@ -1,8 +1,8 @@
-import { SeeSaleCard } from '../'
 import { Close } from '@mui/icons-material'
 import { useIsMobile } from '../../../../../../hooks'
 import { ModalProps } from '../../../../../../types/util'
 import { Box, Drawer, Stack, Typography } from '@mui/material'
+import { FullScreenItemCard } from '../../../../../../components'
 import { CartItem, SaleByProps } from '../../../../../../types/item'
 import { PaymentMethodTitle } from '../../../../../../types/payment'
 
@@ -38,8 +38,8 @@ export const SeeSale: React.FC<SeeSaleModalProps> = ({ sale, isOpen, closeModal 
       <Typography variant='h6' sx={{ color: '#9CADBF' }}><b>Pagamento:</b> {PaymentMethodTitle[sale.paymentMethod]}</Typography>
 
       <Stack mt={2} sx={{ flexWrap: 'wrap' }} direction='row' alignItems='flex-start'>
-        {sale.items.map((item: CartItem)=>(
-          <SeeSaleCard item={item} />
+        {sale.items.map((item: CartItem, index)=>(
+          <FullScreenItemCard item={item} key={index} />
         ))}
       </Stack>
 
@@ -59,7 +59,6 @@ export const SeeSale: React.FC<SeeSaleModalProps> = ({ sale, isOpen, closeModal 
             borderRadius: '30px',
             boxShadow: '0px 0px 5px rgba(169, 207, 70, 1)',
           }}
-        // onClick={()=>setSelectedSale(sale)}
         >
           <Typography variant='subtitle1'>Finalizar pedido</Typography>
         </Box>

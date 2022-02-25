@@ -60,7 +60,7 @@ export const SignUp: React.FC = () => {
           set(ref(db, 'userInfo/' + user.uid), { ...formValues, id: user.uid, isAdmin: false })
             .then(()=>{
               updateUser(user)
-              history.push('account')
+              history.push('/')
               return enqueueSnackbar('Cadastro realizado com sucesso', { 
                 variant: 'success',
                 autoHideDuration: 3000
