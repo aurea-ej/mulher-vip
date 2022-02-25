@@ -44,17 +44,14 @@ export const FlatInput = React.forwardRef<HTMLDivElement, TextInputProps>((props
           marginTop: '0px !important',
           '& .MuiOutlinedInput-root': {
             '& fieldset': {
-              border: '1px solid #ECECEC',
-              boxShadow: (theme) => theme.shadows[1],
+              border: 'none',
+              boxShadow: '0px 2px 10px rgba(0, 0, 0, .1)',
               transition: (theme) => theme.transitions.create(['border-color', 'background-color', 'box-shadow'])
             },
             '&:hover fieldset': {
               borderColor: (theme) => theme.palette.grey[50]
             },
-            '&.Mui-focused fieldset': {
-              boxShadow: (theme) => `${theme.palette.primary.light} 0 0 0 0.2rem`,
-              borderColor: (theme) => theme.palette.primary.main
-            }
+            color: 'grey.600',
           },
           ...sx
         }}

@@ -8,8 +8,8 @@ import { ModalProps } from '../../../../types/util'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { getDatabase, ref, set, child, push } from 'firebase/database'
 import { categoryOptions, codeOptions } from '../../../../utils/options'
-import { HfField, TextInput, SelectInput, CheckBox } from '../../../../components'
-import { Drawer, Stack, Typography, Button, FormGroup, FormControl } from '@mui/material'
+import { Drawer, Stack, Typography, FormGroup, FormControl } from '@mui/material'
+import { HfField, TextInput, SelectInput, CheckBox, Button } from '../../../../components'
 
 type SizeOptions = {
   sizeP?: boolean
@@ -170,7 +170,6 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               <FormControl>
                 <FormGroup sx={{ display: 'flex' }} row>
                   <HfField
-                    defaultChecked
                     component={CheckBox}
                     control={control}
                     checked={sizeP}
@@ -213,7 +212,7 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
                 </FormGroup>
               </FormControl>
             </Stack>
-            <Button type='submit'>Inserir</Button>
+            <Button sx={{ marginTop: 5 }} variant='primary' type='submit'>Inserir</Button>
           </Stack>
         </form>
       </Stack>

@@ -3,6 +3,7 @@ import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { useMemo, useEffect } from 'react'
 import { Close } from '@mui/icons-material'
+import { Size } from '../../../../types/item'
 import { Item } from '../../../../types/item'
 import { useIsMobile } from '../../../../hooks'
 import { ModalProps } from '../../../../types/util'
@@ -10,9 +11,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { getDatabase, ref,update } from 'firebase/database'
 import { getProducts } from '../../../../hooks/useGetProducts'
 import { useItemsStore } from '../../../../store/items/reducer'
-import { Drawer, Stack, Typography, Button } from '@mui/material'
 import { categoryOptions, codeOptions } from '../../../../utils/options'
-import { HfField, TextInput, SelectInput } from '../../../../components'
+import { Drawer, Stack, Typography, FormControl, FormGroup } from '@mui/material'
+import { HfField, TextInput, SelectInput, Button, CheckBox } from '../../../../components'
 
 type InsertItemFormValues = Partial<Item> & {
   item?: any
@@ -56,6 +57,11 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
   }
 
   const selectedItemWatch = watch('item')
+  const sizeP = watch('sizeP')
+  const sizeM = watch('sizeM')
+  const sizeG = watch('sizeG')
+  const sizePS = watch('sizePS')
+  const sizeTU = watch('sizeTU')
 
   const onSubmit = (formValues: InsertItemFormValues ) => {
     update(ref(db, '/products/' + selectedItemWatch), formValues ).then(()=>{
@@ -112,10 +118,10 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
 
       <Stack>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack>
+          <Stack spacing={2}>
             <HfField
               name='item'
-              label='Item'
+              label='Selecionar item'
               inputType='flat'
               control={control}
               options={ItemsOptions}
@@ -123,7 +129,7 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
             />
             <HfField
               name='name'
-              label='Nome'
+              placeholder='Nome'
               inputType='flat'
               control={control}
               component={TextInput}
@@ -133,7 +139,7 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               name='description'
               inputType='flat'
               control={control}
-              label='Descrição'
+              placeholder='Descrição'
               component={TextInput}
               errorMessage={errors.description?.message}
             />
@@ -141,7 +147,7 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               name='imageUrl'
               inputType='flat'
               control={control}
-              label='Url'
+              placeholder='Url'
               component={TextInput}
               errorMessage={errors.imageUrl?.message}
             />
@@ -149,7 +155,7 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               name='price'
               inputType='flat'
               control={control}
-              label='Preço'
+              placeholder='Preço'
               component={TextInput}
               errorMessage={errors.price?.message}
             />
@@ -180,7 +186,54 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               component={SelectInput}
               errorMessage={errors.isAvailable?.message}
             />
-            <Button disabled={!selectedItemWatch} type='submit'>Atualizar</Button>
+            <Stack>
+              <Typography>Tamanhos disponíveis:</Typography>
+              <FormControl>
+                <FormGroup sx={{ display: 'flex' }} row>
+                  <HfField
+                    component={CheckBox}
+                    control={control}
+                    checked={sizeP}
+                    name='sizeP'
+                    label={Size.P}
+                    color='secondary'
+                  />
+                  <HfField
+                    component={CheckBox}
+                    control={control}
+                    checked={sizeM}
+                    name='sizeM'
+                    label={Size.M}
+                    color='secondary'
+                  />
+                  <HfField
+                    component={CheckBox}
+                    control={control}
+                    checked={sizeG}
+                    name='sizeG'
+                    label={Size.G}
+                    color='secondary'
+                  />
+                  <HfField
+                    component={CheckBox}
+                    control={control}
+                    checked={sizePS}
+                    name='sizePS'
+                    label={Size.PS}
+                    color='secondary'
+                  />
+                  <HfField
+                    component={CheckBox}
+                    control={control}
+                    checked={sizeTU}
+                    name='sizeTU'
+                    label={Size.TU}
+                    color='secondary'
+                  />
+                </FormGroup>
+              </FormControl>
+            </Stack>
+            <Button sx={{ marginTop: 5 }} variant='primary' disabled={!selectedItemWatch} type='submit'>Atualizar</Button>
           </Stack>
         </form>
       </Stack>
