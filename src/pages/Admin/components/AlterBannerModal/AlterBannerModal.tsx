@@ -5,34 +5,31 @@ import { Item } from '../../../../types/item'
 import { useIsMobile } from '../../../../hooks'
 import { ModalProps } from '../../../../types/util'
 import { useMemo, useEffect, useState } from 'react'
-import { getProducts } from '../../../../hooks/useGetProducts'
-import { useItemsStore } from '../../../../store/items/reducer'
 import { Drawer, Stack, Typography } from '@mui/material'
+import { getDatabase, ref, remove } from 'firebase/database'
 import { HfField, SelectInput, Button } from '../../../../components'
-import { getStorage, ref as storageRef, uploadBytes } from 'firebase/storage'
-import { child, getDatabase, push, ref, remove, set } from 'firebase/database'
+import { getStorage, listAll, ref as storageRef, uploadBytes, deleteObject, StorageReference } from 'firebase/storage'
 
 type InsertItemFormValues = Partial<Item> & {
-  item?: any
+  bannerImageInput?: any
 }
 
+interface BannerImages {
+  name: string,
+  imageRef: any
+}
 export const AlterBannerModal: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
   const db = getDatabase()
   const isMobile = useIsMobile()
   const storage = getStorage()
   const { enqueueSnackbar } = useSnackbar()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [bannerImages, setBannerImages] = useState<BannerImages[]>([])
   const [newBannerImage, setNewBannerImage] = useState<any>()
   const [infosChange, toggleInfosChange] = useState<boolean>(false)
-  const { storeState: { items }, operations: { updateItems } } = useItemsStore()
-
-  const ItemsOptions = useMemo(()=> {
-    return [{ value: '', label: '---' }, ...Object.entries(items).map(item => ({ value: item[1].id, label: item[1].name }))]
-  },[items])
 
   const { control, handleSubmit, watch } = useForm<InsertItemFormValues>()
 
-  const selectedItemWatch = watch('item')
+  const selectedItemWatch = watch('bannerImageInput')
 
   const onSubmit = () => {
     remove(ref(db, '/products/' + selectedItemWatch)).then(()=>{
@@ -49,32 +46,39 @@ export const AlterBannerModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =
     })
   }
 
-  const addBannerImage = () => {
+  const selectedItem = useMemo(() => {
+    const item: BannerImages = bannerImages.filter(item => item.imageRef === selectedItemWatch)[0]
+    return item
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[selectedItemWatch, infosChange])
 
+  const addBannerImage = () => {
     const imageRef = storageRef(storage,`bannerImages/${newBannerImage.name.trim()}`)
-    setIsLoading(true)
 
     uploadBytes(imageRef, newBannerImage).then((snapshot: any) => {
-      console.log('ref', snapshot.ref)
-      // snapshot.ref.getDownloadURL()
-      //   .then((url: string) => console.log('url', url))
-      // setIsLoading(false)
+      return enqueueSnackbar('Imagem adicionada com sucesso',{
+        variant: 'success',
+        autoHideDuration: 3000
+      })
     })
+  }
 
-    // const key = push(child(ref(db), 'bannerImages')).key
-    // set(ref(db, 'bannerImages/' + key), { ...formValues, id: key })
-    //   .then(() => {
-    //     return enqueueSnackbar('Item inserido com sucesso',{
-    //       variant: 'success',
-    //       autoHideDuration: 3000
-    //     })
-    //   })
-    //   .catch(() => {
-    //     return enqueueSnackbar('Ops, ocorreu um problema ao inserir item',{
-    //       variant: 'error',
-    //       autoHideDuration: 3000
-    //     })
-    //   })
+  const removeBannerImage = () => {
+    deleteObject(selectedItem.imageRef as StorageReference).then(() => {
+      enqueueSnackbar('Imagem removida com sucesso',{
+        variant: 'success',
+        autoHideDuration: 3000
+      })
+      window.location.reload()
+      return
+    }).catch(() => {
+      enqueueSnackbar('Erro ao remover imagem',{
+        variant: 'error',
+        autoHideDuration: 3000
+      })
+      window.location.reload()
+      return
+    })
   }
 
   const handleImage = (event: any) => {
@@ -82,18 +86,23 @@ export const AlterBannerModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =
     setNewBannerImage(file)
   }
 
-  const selectedItem = useMemo(() => {
-    const item: Item = items.filter(item => item.id === selectedItemWatch)[0]
-    return item
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[selectedItemWatch, infosChange])
-
-  useEffect(()=> {
-    if(items.length === 0){
-      getProducts(updateItems)
-    }
+  useEffect(()=>{
+    const listRef = storageRef(storage, 'bannerImages/')
+    listAll(listRef)
+      .then((res) => {
+        res.items.map((itemRef) => {
+          return setBannerImages([{
+            name: itemRef.name,
+            imageRef: itemRef
+          },...bannerImages])
+        })
+      })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
+
+  const setBannerImagesOptions = useMemo(()=>{
+    return [{ value: '', label: '---' }, ...Object.entries(bannerImages).map(item => ({ value: item[1].imageRef, label: item[1].name }))]
+  },[bannerImages])
 
   return (
     <Drawer
@@ -112,40 +121,39 @@ export const AlterBannerModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =
       <Stack alignItems='flex-end'>
         <Close sx={{ cursor: 'pointer', marginX: 1 }} onClick={closeModal} />
       </Stack>
-      <Typography variant='h2' sx={{ textAlign: 'center' }} >Deletar item</Typography>
+      <Typography variant='h2' sx={{ textAlign: 'center' }}>Banner</Typography>
 
       <Stack>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack>
             <HfField
-              name='item'
-              label='Item'
+              name='bannerImageInput'
+              label='Deletar Item'
               inputType='flat'
               control={control}
-              options={ItemsOptions}
               component={SelectInput}
+              options={setBannerImagesOptions}
             />
-            <input type='file' onChange={handleImage} accept='image/png, image/jpeg' placeholder='Imagem'/>
             {selectedItem && (
-              <>
-                <Stack spacing={2}>
-                  <input type='file' onChange={handleImage} accept='image/png, image/jpeg' placeholder='Imagem'/>
-
-                  <Typography sx={{ color: '#9CADBF', marginTop: 2 }}><b>Nome:</b> {selectedItem?.name}</Typography>
-                  <Typography sx={{ color: '#9CADBF' }}><b>Preço:</b> R$ {Number(selectedItem?.price).toFixed(2)}</Typography>
-                  <Typography sx={{ color: '#9CADBF' }}><b>Descrição:</b> {selectedItem?.description}</Typography>
-                </Stack>
-                <Button sx={{ marginTop: 3 }} disabled={!selectedItemWatch} type='submit'>Deletar</Button>
-              </>
+              <Stack spacing={2}>
+                <Typography sx={{ color: '#9CADBF', marginTop: 2 }}><b>Nome:</b> {selectedItem?.name}</Typography>
+                <Button onClick={removeBannerImage} sx={{ marginTop: 3 }} disabled={!selectedItemWatch} type='submit'>Deletar</Button>
+              </Stack>
             )}
 
-            <Button
-              variant='primary'
-              onClick={addBannerImage}
-              disabled={!(!!newBannerImage)}
-            >
+            <Stack spacing={2} mt={5}>
+              <Stack alignItems='center'  direction={isMobile ? 'column' : 'row'} mt={5}>
+                <Typography variant='h6' sx={{ color: '#9CADBF', marginRight: 2 }}>Nova imagem: </Typography>
+                <input type='file' onChange={handleImage} accept='image/png, image/jpeg' placeholder='Imagem'/>
+              </Stack>
+              <Button
+                variant='primary'
+                onClick={addBannerImage}
+                disabled={!(!!newBannerImage)}
+              >
               Inserir imagem
-            </Button>
+              </Button>
+            </Stack>
           </Stack>
         </form>
       </Stack>

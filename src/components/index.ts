@@ -1,5 +1,6 @@
 export * from './Button'
 export * from './HfField'
+export * from './CheckBox'
 export * from './CardItem'
 export * from './ItemCard'
 export * from './TextInput'
