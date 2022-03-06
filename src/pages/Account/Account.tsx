@@ -64,26 +64,26 @@ export const Account: React.FC = () => {
     <Container>
       <Stack alignItems='center' sx={{ height: '100%', bgcolor: 'transparent', width: '100%' }}>
         <Typography variant='h2' sx={{ textAlign: 'center' }}>{account?.name}</Typography>
-        <Grid mt={10} container spacing={2}>
-          <Grid item xs={4}>
+        <Grid mt={10} container spacing={2} alignItems='center' justifyContent='center' sx={{ width: '100%' }}>
+          <Grid item xs={5}>
             <ProfileCard title='Cidade' value={account!.city} />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <ProfileCard title='Bairro' value={account!.district} />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <ProfileCard title='Rua' value={account!.address} />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <ProfileCard title='Número da casa' value={account!.houseNumber} />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <ProfileCard title='Telefone' value={account!.phone} />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <ProfileCard title='E-mail' value={account!.email} />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <ProfileCard title='Data de nascimento' value={formatDateTime(new Date(account!.birthDate!))} />
           </Grid>
         </Grid>

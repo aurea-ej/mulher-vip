@@ -38,7 +38,8 @@ export interface CartItemsByProps {
 }
 
 export type Sale = CartItemsByProps & AccountByProps & {
-  paymentMethod: keyof typeof PaymentMethod
+  id: string
+  paymentMethod: keyof typeof PaymentMethod,
 }
 
 export interface SaleByProps {

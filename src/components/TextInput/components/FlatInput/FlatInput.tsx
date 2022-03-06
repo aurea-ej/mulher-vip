@@ -27,7 +27,7 @@ export const FlatInput = React.forwardRef<HTMLDivElement, TextInputProps>((props
             fontSize: (theme) => theme.typography.body1.fontSize,
             fontWeight: (theme) => theme.typography.body1.fontWeight,
             lineHeight: (theme) => theme.typography.body1.lineHeight,
-            color: 'grey.300',
+            color: 'grey.500',
             paddingBottom: 1
           }}
           htmlFor={rest.name}

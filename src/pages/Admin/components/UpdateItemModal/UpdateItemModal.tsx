@@ -100,6 +100,11 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
       setValue('price', item?.price)
       setValue('imageUrl', item?.imageUrl)
       setValue('description', item?.description)
+      setValue('sizeP', item?.arraySize[0])
+      setValue('sizeM', item?.arraySize[1])
+      setValue('sizeG', item?.arraySize[2])
+      setValue('sizePS', item?.arraySize[3])
+      setValue('sizeTU', item?.arraySize[4])
       return
     }
     resetForm()
@@ -112,6 +117,8 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
+
+  // console.log('items',items[selectedItemWatch])
 
   return (
     <Drawer

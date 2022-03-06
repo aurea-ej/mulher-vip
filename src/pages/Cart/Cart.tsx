@@ -56,12 +56,13 @@ export const Cart: React.FC = () => {
   const finishBuy = () => {
     if(account && CartItems.length > 0){
       if(selectedPaymentOption){
+        const key = push(child(ref(db), 'sales')).key
         const sale: Sale = {
           account,
+          id: key!,
           items: CartItems,
           paymentMethod: selectedPaymentOption as unknown as keyof typeof PaymentMethod
         }
-        const key = push(child(ref(db), 'sales')).key
         set(ref(db, 'sales/' + key), sale)
           .then(()=>{
             remove(ref(db, '/cart/' +  account.id))

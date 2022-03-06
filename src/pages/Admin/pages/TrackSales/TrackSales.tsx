@@ -4,40 +4,42 @@ import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 import { Sale } from '../../../../types/item'
 import { useIsMobile } from '../../../../hooks'
-import { Container } from '../../../../components'
 import { app } from '../../../../FIREBASECONFIG.js'
 import { useModal } from '../../../../hooks/useModal'
-import { getDatabase, ref, child, get } from 'firebase/database'
-import { CircularProgress, Stack, Typography } from '@mui/material'
+import { Container, EmptyPage } from '../../../../components'
+import { getDatabase, ref, onValue } from 'firebase/database'
 import { PaymentMethodTitle } from '../../../../types/payment'
+import { CircularProgress, Stack, Typography } from '@mui/material'
 
 export const TrackSales: React.FC = () => {
   const db = getDatabase(app)
   const isMobile = useIsMobile()
   const { enqueueSnackbar } = useSnackbar()
-  const [sales, setSales] = useState<Sale[]>()
+  const [sales, setSales] = useState<Sale[] | []>()
   const [seeSaleIsOpen, toggleSeeSale] = useModal()
   const [selectedSale, setSelectedSale] = useState<Sale>()
 
   const getSales = () => {
-    const cartProductsRef = ref(db)
-    get(child(cartProductsRef, 'sales/')).then((snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val() as Sale[]
-        var items = Object.keys(data).map((key: any) => data[key])
-        if(items.length > 0 ){
-          setSales(items)
-          toggleSeeSale()
-          return
+    const cartProductsRef = ref(db, 'sales/')
+    try {
+      onValue(cartProductsRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val() as Sale[]
+          var items = Object.keys(data).map((key: any) => data[key])
+          if(items.length > 0 ){
+            setSales(items)
+            toggleSeeSale()
+            return
+          }
         }
-      }
-    }).catch(() => {
+        setSales([])
+      })
+    } catch (error) {
       return enqueueSnackbar('Ocorreu um erro ao recuperar seus itens do carrinho', { 
         variant: 'error',
         autoHideDuration: 3000
-      })
-    })
-    return
+      }) 
+    }
   }
 
   useEffect(()=>{
@@ -45,12 +47,21 @@ export const TrackSales: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
-  if(!sales)
+  if(!sales) {
     return (
       <Container>
         <CircularProgress sx={{ color: '#a9cf46' }} />
       </Container>
+    ) 
+  }
+
+  if(sales.length === 0) {
+    return (
+      <Container>
+        <EmptyPage />
+      </Container>
     )
+  }
 
   return (
     <Container>

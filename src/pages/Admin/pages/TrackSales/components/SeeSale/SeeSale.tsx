@@ -1,15 +1,23 @@
 import { Close } from '@mui/icons-material'
 import { useIsMobile } from '../../../../../../hooks'
 import { ModalProps } from '../../../../../../types/util'
-import { Box, Drawer, Stack, Typography } from '@mui/material'
-import { FullScreenItemCard } from '../../../../../../components'
+import { getDatabase, ref, set } from 'firebase/database'
+import { Drawer, Stack, Typography } from '@mui/material'
 import { CartItem, SaleByProps } from '../../../../../../types/item'
 import { PaymentMethodTitle } from '../../../../../../types/payment'
+import { FullScreenItemCard, Button } from '../../../../../../components'
 
 export type SeeSaleModalProps = ModalProps & SaleByProps
 
 export const SeeSale: React.FC<SeeSaleModalProps> = ({ sale, isOpen, closeModal }) => {
+  const db = getDatabase()
   const isMobile = useIsMobile()
+
+  const finishOrder = () => {
+    const alertConfirmation = window.confirm('Tem certeza que deseja encerrar este pedido?')
+    if(alertConfirmation)
+      set(ref(db, 'sales/' + sale.id), null)
+  }
 
   return (
     <Drawer
@@ -44,24 +52,17 @@ export const SeeSale: React.FC<SeeSaleModalProps> = ({ sale, isOpen, closeModal 
       </Stack>
 
       <Stack alignItems='center'>
-        <Box
-          sx={{
-            bottom: 25,
-            paddingY: 1,
-            paddingX: 3,
-            color: 'white',
-            marginLeft: 10,
+        <Button
+          variant='primary'
+          onClick={finishOrder}
+          sx={{ 
             margin: '0 auto',
             position: 'fixed',
-            cursor: 'pointer',
-            bgcolor: '#a9cf46',
-            textAlign: 'center',
-            borderRadius: '30px',
-            boxShadow: '0px 0px 5px rgba(169, 207, 70, 1)',
+            bottom: 25,
           }}
         >
-          <Typography variant='subtitle1'>Finalizar pedido</Typography>
-        </Box>
+          Finalizar pedido
+        </Button>
       </Stack>
     </Drawer>
   )

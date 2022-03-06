@@ -142,7 +142,7 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               name='category'
               inputType='flat'
               control={control}
-              placeholder='Categoria'
+              label='Categoria'
               options={categoryOptions}
               component={SelectInput}
               errorMessage={errors.category?.message}
@@ -152,7 +152,7 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               inputType='flat'
               control={control}
               options={codeOptions}
-              placeholder='Código'
+              label='Código'
               component={SelectInput}
               errorMessage={errors.code?.message}
             />
@@ -161,12 +161,12 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               inputType='flat'
               control={control}
               options={isAvailableOptions}
-              placeholder='Disponibilidade'
+              label='Disponibilidade'
               component={SelectInput}
               errorMessage={errors.isAvailable?.message}
             />
             <Stack>
-              <Typography>Tamanhos disponíveis:</Typography>
+              <Typography sx={{ color: 'grey.500', }}>Tamanhos disponíveis:</Typography>
               <FormControl>
                 <FormGroup sx={{ display: 'flex' }} row>
                   <HfField
