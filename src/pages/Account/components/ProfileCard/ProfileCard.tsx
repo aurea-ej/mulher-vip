@@ -16,7 +16,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ title, value }) => {
         bgcolor: 'rgba(169, 207, 70, .7)',
         boxShadow: '0px 2px 5px rgba(0, 0, 0, .1)',
       }}>
-      <Typography variant='subtitle2' sx={{ textAlign: 'center' }}>{title}:</Typography>
+      <Typography variant='subtitle2' sx={{ }}>{title}:</Typography>
       <Typography variant='subtitle1'>{value}</Typography>
     </Card>
   )

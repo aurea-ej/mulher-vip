@@ -9,7 +9,8 @@ import { Box, Stack, Typography } from '@mui/material'
 import TimelineIcon from '@mui/icons-material/Timeline'
 import adminAnimation from '../../assets/lottie/admin.json'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import { InsertItemModal, UpdateItemModal, DeleteItemModal } from './components'
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import { InsertItemModal, UpdateItemModal, DeleteItemModal, AlterBannerModal } from './components'
 
 const DEFAULT_OPTIONS = {
   loop: true,
@@ -25,6 +26,7 @@ export const Admin: React.FC = () => {
   const isMobile = useIsMobile()
   const [insertItemIsOpen, toggleInsertItem] = useModal()
   const [updateItemIsOpen, toggleUpdateItem] = useModal()
+  const [alterBannerIsOpen, toggleAlterBanner] = useModal()
   const [deleteItemIsOpen, toggleDeleteItemIsOpen] = useModal()
 
   return (
@@ -74,6 +76,12 @@ export const Admin: React.FC = () => {
                 <b>ACOMPANHAR PEDIDOS</b>
               </Typography>
             </Stack>
+            <Stack onClick={toggleAlterBanner}>
+              <Typography sx={{ display: 'flex', color: '#9CADBF', alignItems: 'center', cursor: 'pointer' }}>
+                <AddPhotoAlternateIcon sx={{ marginRight: 1 }} />
+                <b>IMAGENS DO BANNER</b>
+              </Typography>
+            </Stack>
           </Stack>
         </Stack>
 
@@ -82,6 +90,7 @@ export const Admin: React.FC = () => {
         </Box>
       </Stack>
       <InsertItemModal closeModal={toggleInsertItem} isOpen={insertItemIsOpen} />
+      <AlterBannerModal closeModal={toggleAlterBanner} isOpen={alterBannerIsOpen} />
       <UpdateItemModal closeModal={toggleUpdateItem} isOpen={updateItemIsOpen} />
       <DeleteItemModal closeModal={toggleDeleteItemIsOpen} isOpen={deleteItemIsOpen} />
     </Container>

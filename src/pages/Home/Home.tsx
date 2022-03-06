@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import 'firebase/auth'
 import 'firebase/database'
 import { Slide } from './components'
@@ -13,9 +13,12 @@ import { useAccountStore } from '../../store/account/reducer'
 import { Container, CardItem, EmptyPage } from '../../components'
 import { useSelectedFilterStore } from '../../store/selectedFilter/reducer'
 import { useHaveFilteredItemsStore } from '../../store/haveFilteredItems/reducer'
+import { getDownloadURL, getStorage, listAll, ref } from 'firebase/storage'
 
 export const Home: React.FC = () => {
+  const storage = getStorage()
   const isMobile = useIsMobile()
+
   const { storeState: { user } } = useUserStore()
   const { storeState: { haveFilteredItems }, operations: { updateHaveFilteredItems } } = useHaveFilteredItemsStore()
   const { storeState: { items }, operations: { updateItems } } = useItemsStore()
@@ -27,6 +30,21 @@ export const Home: React.FC = () => {
     getProducts(updateItems)
     updateHaveFilteredItems(true)
   }
+
+  const bannerImages = useMemo(()=>{
+    const listRef = ref(storage, 'bannerImages/')
+    const bannerImagesTemp: string[] = []
+    listAll(listRef)
+      .then((res) => {
+        res.items.forEach((itemRef) => {
+          getDownloadURL(ref(itemRef))
+            .then((downloadURL) => {
+              bannerImagesTemp.push(downloadURL)
+            })
+        })
+      })
+    return bannerImagesTemp
+  },[storage])
 
   useEffect(()=>{
     getProducts(updateItems)
@@ -42,16 +60,18 @@ export const Home: React.FC = () => {
 
   return (
     <Container>
-      <Stack
-        mb={5}
-        alignItems='center'
-        justifyContent='center'
-        sx={{
-          width: '100vw',
-          maxHeight: isMobile ? '20vh' : '40vh',
-        }}>
-        <Slide />
-      </Stack>
+      {bannerImages.length > 0 && (
+        <Stack
+          mb={5}
+          alignItems='center'
+          justifyContent='center'
+          sx={{
+            width: '100vw',
+            maxHeight: isMobile ? '20vh' : '40vh',
+          }}>
+          <Slide bannerImages={bannerImages} />
+        </Stack>
+      )}
       {filter && (
         <Stack  justifyContent='flex-end' sx={{ width: '95%' }}  direction='row'>
           <Typography
@@ -77,8 +97,8 @@ export const Home: React.FC = () => {
           {items.map((item, key) => {
             return item.isAvailable ?
               (
-                <Grid sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} md={isMobile ? 12 : 3} lg={isMobile ? 12 : 3} xs={isMobile ? 12 : 3} item>
-                  <CardItem key={key} item={item} />
+                <Grid key={key} sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} md={isMobile ? 12 : 3} lg={isMobile ? 12 : 3} xs={isMobile ? 12 : 3} item>
+                  <CardItem item={item} />
                 </Grid>
               ) : null
           }
