@@ -6,6 +6,19 @@ export interface sizeItem {
   value: number
   label: string
 }
+
+export enum SaleStatus {
+  IN_PREPARATION = 'IN_PREPARATION',
+  OUT_FOR_DELIVERY = 'OUT_FOR_DELIVERY',
+  DELIVERED = 'DELIVERED',
+}
+
+export enum SaleStatusTitle {
+  IN_PREPARATION = 'Em preparação',
+  OUT_FOR_DELIVERY = 'Saiu para entrega',
+  DELIVERED = 'Entregue',
+}
+
 export interface Item {
   id: string
   name: string
@@ -39,6 +52,7 @@ export interface CartItemsByProps {
 
 export type Sale = CartItemsByProps & AccountByProps & {
   id: string
+  status: keyof typeof SaleStatus
   paymentMethod: keyof typeof PaymentMethod,
 }
 

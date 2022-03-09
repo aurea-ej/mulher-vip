@@ -9,9 +9,10 @@ import {
   Toolbar,
 } from '@mui/material'
 import { useHistory } from 'react-router'
+import FeedIcon from '@mui/icons-material/Feed'
 import { useModal } from '../../../../../../hooks/useModal'
-import { AccountCircle, ShoppingCart } from '@mui/icons-material'
 import { useAccountStore } from '../../../../../../store/account/reducer'
+import { AccountCircle, ShoppingCart } from '@mui/icons-material'
 import { Categories, CategoriesTitle } from '../../../../../../types/categories'
 
 export const MobileHeader: React.FC = () => {
@@ -54,13 +55,9 @@ export const MobileHeader: React.FC = () => {
               direction='row'
               alignItems='center'
               sx={{ cursor: 'pointer' }}
-              onClick={()=>{
-                account && account.isAdmin ?
-                  history.push('/admin') :
-                  history.push('/account')
-              }}
+              onClick={()=>history.push('/purchase')}
             >
-              <AccountCircle />
+              <FeedIcon />
             </Stack>
             <Stack
               direction='row'
@@ -69,6 +66,18 @@ export const MobileHeader: React.FC = () => {
               onClick={()=>history.push('/cart')}
             >
               <ShoppingCart />
+            </Stack>
+            <Stack
+              direction='row'
+              alignItems='center'
+              sx={{ cursor: 'pointer' }}
+              onClick={()=>{
+                account && account.isAdmin ?
+                  history.push('/admin') :
+                  history.push('/account')
+              }}
+            >
+              <AccountCircle />
             </Stack>
             <Stack alignItems='center' onClick={toggleOpenCategories}>
               <Box sx={{ width: '20px', bgcolor: 'white', height: '2px' }}></Box>

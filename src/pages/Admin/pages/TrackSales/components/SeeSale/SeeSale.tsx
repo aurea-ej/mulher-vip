@@ -3,9 +3,9 @@ import { useIsMobile } from '../../../../../../hooks'
 import { ModalProps } from '../../../../../../types/util'
 import { getDatabase, ref, set } from 'firebase/database'
 import { Drawer, Stack, Typography } from '@mui/material'
-import { CartItem, SaleByProps } from '../../../../../../types/item'
 import { PaymentMethodTitle } from '../../../../../../types/payment'
 import { FullScreenItemCard, Button } from '../../../../../../components'
+import { CartItem, SaleByProps, SaleStatus } from '../../../../../../types/item'
 
 export type SeeSaleModalProps = ModalProps & SaleByProps
 
@@ -13,10 +13,28 @@ export const SeeSale: React.FC<SeeSaleModalProps> = ({ sale, isOpen, closeModal 
   const db = getDatabase()
   const isMobile = useIsMobile()
 
-  const finishOrder = () => {
-    const alertConfirmation = window.confirm('Tem certeza que deseja encerrar este pedido?')
-    if(alertConfirmation)
-      set(ref(db, 'sales/' + sale.id), null)
+  const finishOrder = (clientEmail: string) => {
+    const alertConfirmation = window.confirm('Tem certeza que deseja FINALIZAR este pedido?')
+    if(alertConfirmation){
+      set(ref(db, 'sales/' + sale.id), { ...sale, status: SaleStatus.DELIVERED })
+    }
+    const sendMailConfirmation = window.confirm('Deseja avisar ao cliente por e-mail?')
+    if(alertConfirmation && sendMailConfirmation){
+      window.location.href = `mailto:${clientEmail}?subject=Sua compra saiu para entrega!`
+    }
+    closeModal()
+  }
+
+  const outForDelivery = (clientEmail: string) => {
+    const alertConfirmation = window.confirm('Confirmar que o item SAIU PARA ENTREGA?')
+    if(alertConfirmation){
+      set(ref(db, 'sales/' + sale.id), { ...sale, status: SaleStatus.OUT_FOR_DELIVERY })      
+    }
+    const sendMailConfirmation = window.confirm('Deseja avisar ao cliente por e-mail?')
+    if(alertConfirmation && sendMailConfirmation){
+      window.location.href = `mailto:${clientEmail}?subject=Sua compra saiu para entrega!`
+    }
+    closeModal()
   }
 
   return (
@@ -51,15 +69,27 @@ export const SeeSale: React.FC<SeeSaleModalProps> = ({ sale, isOpen, closeModal 
         ))}
       </Stack>
 
-      <Stack alignItems='center'>
+      <Stack
+        sx={{ 
+          margin: '0 auto',
+          position: 'fixed',
+          bottom: 25,
+        }}
+        spacing={3}
+        direction='row'
+        alignItems='center'
+      >
+        <Button
+          variant='secondary'
+          onClick={()=> outForDelivery(sale.account.email)}
+          disabled={sale.status !== SaleStatus.IN_PREPARATION}
+        >
+          Saiu para entrega
+        </Button>
         <Button
           variant='primary'
-          onClick={finishOrder}
-          sx={{ 
-            margin: '0 auto',
-            position: 'fixed',
-            bottom: 25,
-          }}
+          onClick={() => finishOrder(sale.account.email)}
+          disabled={sale.status === SaleStatus.DELIVERED}
         >
           Finalizar pedido
         </Button>

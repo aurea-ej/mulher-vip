@@ -13,5 +13,4 @@ export const getProducts = (updateItems: (items: Item[]) => void) => {
       updateItems(items)
     }
   })
-
 }
