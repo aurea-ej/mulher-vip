@@ -1,11 +1,13 @@
 import * as yup from 'yup'
+import { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { Close } from '@mui/icons-material'
-import { Item, Size } from '../../../../types/item'
 import { useIsMobile } from '../../../../hooks'
+import { Item, Size } from '../../../../types/item'
 import { ModalProps } from '../../../../types/util'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { uploadBytes, ref as storageRef, getStorage, getDownloadURL } from 'firebase/storage'
 import { getDatabase, ref, set, child, push } from 'firebase/database'
 import { categoryOptions, codeOptions } from '../../../../utils/options'
 import { Drawer, Stack, Typography, FormGroup, FormControl } from '@mui/material'
@@ -19,19 +21,21 @@ type SizeOptions = {
   sizeTU?: boolean
 }
 
-type InsertItemFormValues = Partial<Item> & SizeOptions
+type InsertItemFormValues = Partial<Omit<Item, 'imageUrl'>> & SizeOptions
 
 export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
   const db = getDatabase()
+  const storage = getStorage()
   const isMobile = useIsMobile()
   const { enqueueSnackbar } = useSnackbar()
+  const [newProductImage, setProductImage] = useState<any>()
+  const [newProductImageUrl, setProductImageUrl] = useState<string>()
   const isAvailableOptions = [{ value: 0, label: '---' },{ value: 1, label: 'Disponível' }, { value: 2, label: 'Indisponível' }]
 
   const DEFAULT_FORM_VALUES: InsertItemFormValues  = {
     category: 'CLOTHES',
     code: 'BLUSA',
     description: '',
-    imageUrl: '',
     name: '',
     price: '',
     isAvailable: 0,
@@ -41,7 +45,6 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
     category: yup.mixed().required('Campo obrigatório'),
     code: yup.mixed().required('Campo obrigatório'),
     description: yup.string().required('Campo obrigatório'),
-    imageUrl: yup.string().required('Campo obrigatório'),
     name: yup.string().required('Campo obrigatório'),
     price: yup.number().required('Campo obrigatório'),
     id: yup.string(),
@@ -69,7 +72,7 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
     const arraySize = [!!sizeP, !!sizeM, !!sizeG, !!sizePS, !!sizeTU]
 
     const key = push(child(ref(db), 'products')).key
-    set(ref(db, 'products/' + key), { ...formValues, id: key, arraySize })
+    set(ref(db, 'products/' + key), { ...formValues, id: key, arraySize, imageUrl: newProductImageUrl })
       .then(() => {
         return enqueueSnackbar('Item inserido com sucesso',{
           variant: 'success',
@@ -82,6 +85,26 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
           autoHideDuration: 3000
         })
       })
+  }
+
+  const handleImageImage = (event: any) => {
+    const file = event.target.files[0]
+    setProductImage(file)
+  }
+
+  const generateImageUrl = () => {
+    const imageRef = storageRef(storage,`productsImages/${newProductImage.name.trim()}`)
+
+    uploadBytes(imageRef, newProductImage).then((snapshot: any) => {
+      getDownloadURL(storageRef(imageRef))
+        .then((downloadURL) => {
+          setProductImageUrl(downloadURL)
+        })
+      return enqueueSnackbar('Imagem adicionada com sucesso',{
+        variant: 'success',
+        autoHideDuration: 3000
+      })
+    })
   }
 
   return (
@@ -123,14 +146,6 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               errorMessage={errors.description?.message}
             />
             <HfField
-              name='imageUrl'
-              inputType='flat'
-              control={control}
-              placeholder='Url'
-              component={TextInput}
-              errorMessage={errors.imageUrl?.message}
-            />
-            <HfField
               name='price'
               inputType='flat'
               control={control}
@@ -165,6 +180,20 @@ export const InsertItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               component={SelectInput}
               errorMessage={errors.isAvailable?.message}
             />
+            <Stack spacing={2} mt={5}>
+              <Stack alignItems='center'  direction={isMobile ? 'column' : 'row'} mt={5}>
+                <Typography variant='h6' sx={{ color: '#9CADBF', marginRight: 2 }}>Imagem do produto: </Typography>
+                <input type='file' onChange={handleImageImage} accept='image/png, image/jpeg' placeholder='Imagem'/>
+              </Stack>
+              <Button
+                variant='secondary'
+                sx={{ width: isMobile? '100%' : '30%' }}
+                onClick={generateImageUrl}
+                disabled={!(!!newProductImage)}
+              >
+              Inserir imagem
+              </Button>
+            </Stack>
             <Stack>
               <Typography sx={{ color: 'grey.500', }}>Tamanhos disponíveis:</Typography>
               <FormControl>

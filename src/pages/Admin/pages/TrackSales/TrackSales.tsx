@@ -2,7 +2,7 @@ import { Box } from '@mui/system'
 import { SeeSale } from './components'
 import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
-import { Sale } from '../../../../types/item'
+import { Sale, SaleStatus, SaleStatusTitle } from '../../../../types/item'
 import { useIsMobile } from '../../../../hooks'
 import { app } from '../../../../FIREBASECONFIG.js'
 import { useModal } from '../../../../hooks/useModal'
@@ -40,6 +40,23 @@ export const TrackSales: React.FC = () => {
         autoHideDuration: 3000
       }) 
     }
+  }
+
+  const saleStatusTextColor = (saleStatus: keyof typeof SaleStatus) => {
+    switch (saleStatus) {
+      case SaleStatus.IN_PREPARATION:
+        return 'orange'
+
+      case SaleStatus.OUT_FOR_DELIVERY:
+        return 'red'
+
+      case SaleStatus.DELIVERED:
+        return 'green'
+    
+      default:
+        return 'orange'
+    }
+
   }
 
   useEffect(()=>{
@@ -80,6 +97,11 @@ export const TrackSales: React.FC = () => {
             <Stack sx={{ color: '#9CADBF', width: '100%' }}>
               <Typography><b>Cliente:</b> {sale.account.name}</Typography>
               <Typography><b>Telefone:</b> {sale.account.phone}</Typography>
+              <Typography sx={{ display: 'flex' }}><b>Status:</b>
+                <Typography sx={{ paddingLeft: 1, color: saleStatusTextColor(sale.status) }}>
+                  <b>{SaleStatusTitle[sale.status]}</b>
+                </Typography>
+              </Typography>
               <Typography><b>Endereço:</b> {sale.account.address}, {sale.account.district} - {sale.account.houseNumber}</Typography>
               <Typography><b>Pagamento:</b> {PaymentMethodTitle[sale.paymentMethod]}</Typography>
             </Stack>

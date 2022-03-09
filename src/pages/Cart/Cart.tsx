@@ -4,11 +4,11 @@ import 'firebase/database'
 import { useSnackbar } from 'notistack'
 import { useHistory } from 'react-router'
 import { app } from '../../FIREBASECONFIG.js'
-import { CartItem, Sale } from '../../types/item'
 import { PaymentMethod } from '../../types/payment'
 import { formatToRealStr } from '../../utils/format'
 import { getUserInfos } from '../../hooks/useUseInfo'
 import { useIsMobile } from '../../hooks/useIsMobile'
+import { CartItem, Sale, SaleStatus } from '../../types/item'
 import { useAccountStore } from '../../store/account/reducer'
 import { useCartItemsStore } from '../../store/cartItems/reducer'
 import { Stack, Typography, Select, MenuItem } from '@mui/material'
@@ -61,6 +61,7 @@ export const Cart: React.FC = () => {
           account,
           id: key!,
           items: CartItems,
+          status: SaleStatus.IN_PREPARATION,
           paymentMethod: selectedPaymentOption as unknown as keyof typeof PaymentMethod
         }
         set(ref(db, 'sales/' + key), sale)

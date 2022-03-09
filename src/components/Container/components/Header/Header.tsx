@@ -10,6 +10,7 @@ import {
 } from '@mui/material'
 import { useHistory } from 'react-router'
 import { useIsMobile } from '../../../../hooks'
+import FeedIcon from '@mui/icons-material/Feed'
 import { AccountCircle, ShoppingCart } from '@mui/icons-material'
 import { useAccountStore } from '../../../../store/account/reducer'
 import { Categories, CategoriesTitle } from '../../../../types/categories'
@@ -78,6 +79,15 @@ export const Header: React.FC = () => {
           >
             <ShoppingCart />
             Carrinho
+          </Stack>
+          <Stack
+            direction='row'
+            alignItems='center'
+            sx={{ cursor: 'pointer' }}
+            onClick={()=>history.push('/purchase')}
+          >
+            <FeedIcon />
+            Compras
           </Stack>
         </Stack>
       </Toolbar>

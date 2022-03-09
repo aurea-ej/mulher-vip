@@ -1,4 +1,5 @@
 import './index.css'
+import { Purchase } from './pages/Purchase'
 import { TrackSales } from './pages/Admin/pages'
 import { SignUp } from './pages/Account/components'
 import { Home, Cart, Account, Admin } from './pages'
@@ -22,6 +23,9 @@ const App: React.FC = () => {
         </Route>
         <Route exact path='/admin'>
           <Admin />
+        </Route>
+        <Route exact path='/purchase'>
+          <Purchase />
         </Route>
         <Route exact path='/admin/vendas'>
           <TrackSales />
