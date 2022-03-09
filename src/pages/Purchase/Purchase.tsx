@@ -25,7 +25,7 @@ export const Purchase: React.FC = () => {
       const data = snapshot.val() as Sale[]
       var items = Object.keys(data).map((key: any) => data[key])
       if(items.length > 0 ) {
-        setSales(items.filter(item => item.account.id === account?.id))
+        setSales(items.filter(item => item.account.id === account?.id).reverse())
       }
     })
   }
@@ -66,9 +66,8 @@ export const Purchase: React.FC = () => {
     <Container>
       <Stack width={isMobile ? 'auto' : '60vw'} mt={2}>
         <Typography mt={3} mb={4} sx={{ textAlign: 'center' }} variant='h4'>Suas Compras</Typography>
-        {sales.map((sale: Sale, index)=>(
+        {sales.map((sale: Sale)=>(
           <Stack mb={4} width='100%' sx={{ borderBottom: '1px dashed #9CADBF' }}>
-            <Typography sx={{ paddingLeft: 1, opacity: .4 }}>Compra {index + 1}</Typography>
             <Typography sx={{ paddingLeft: 1, display: 'flex' }}>
               <Typography sx={{ opacity: .4 }}>Status:</Typography>
               <Typography sx={{ paddingLeft: 1, color: saleStatusTextColor(sale.status) }}><b>{SaleStatusTitle[sale.status]}</b></Typography>
