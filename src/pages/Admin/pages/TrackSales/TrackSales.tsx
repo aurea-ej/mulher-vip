@@ -25,7 +25,7 @@ export const TrackSales: React.FC = () => {
       onValue(cartProductsRef, (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val() as Sale[]
-          var items = Object.keys(data).map((key: any) => data[key])
+          var items = Object.keys(data).map((key: any) => data[key]).reverse()
           if(items.length > 0 ){
             setSales(items)
             toggleSeeSale()
