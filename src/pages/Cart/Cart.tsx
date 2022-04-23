@@ -69,6 +69,7 @@ export const Cart: React.FC = () => {
             remove(ref(db, '/cart/' +  account.id))
               .then(()=>{
                 resetCartItems()
+                history.push('purchase')
                 return enqueueSnackbar('Compra finalizada', { 
                   variant: 'success',
                   autoHideDuration: 3000
@@ -122,7 +123,7 @@ export const Cart: React.FC = () => {
       </Container>
     )
   }
-  let total = 0
+  // let total = 0
 
   const selectOption: selectOptionProps[] = [
     { value: '', label: '---' },
@@ -138,7 +139,7 @@ export const Cart: React.FC = () => {
         {CartItems && (
           <Stack sx={{ width: '100%' }} alignItems='center' justifyContent='center'>
             {CartItems.map((item, index) => {
-              total = total + (Number(item.price) * item.amount)
+              // total = total + (Number(item.price) * item.amount)
               return <FullScreenItemCard key={index} item={item} />
             })}
           </Stack> 
@@ -146,7 +147,7 @@ export const Cart: React.FC = () => {
         <Stack alignItems='flex-end' sx={{ width: '100%' }}>
           <Typography sx={{ display: 'flex', alignItems: 'center' }} variant='h5'>
             <Typography mr={1} variant='h6' sx={{ color: 'gray' }}>Valor total:</Typography>
-            {formatToRealStr(total)}
+            {/* {formatToRealStr(total)} */}
           </Typography>
         </Stack>
         <Stack mt={3} direction='row' justifyContent='flex-end' alignItems='center' spacing={2} sx={{ width: '100%' }}>

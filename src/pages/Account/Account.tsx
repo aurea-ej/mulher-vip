@@ -46,7 +46,7 @@ export const Account: React.FC = () => {
       getUser()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[user])
+  },[])
 
   if(isLoading) {
     return (
@@ -97,7 +97,8 @@ export const Account: React.FC = () => {
             bgcolor: 'rgba(169, 207, 70, .7)',
           }}
           mt={8}
-          onClick={()=>onSignOut()}>
+          // onClick={()=>onSignOut()}
+        >
           Sair
         </Box>
       </Stack>

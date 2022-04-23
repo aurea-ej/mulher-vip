@@ -20,8 +20,9 @@ export const Header: React.FC = () => {
   const isMobile = useIsMobile()
   const { storeState: { account } } = useAccountStore()
 
-  if(isMobile)
+  if(isMobile){
     return <MobileHeader />
+  }
 
   return (
     <AppBar

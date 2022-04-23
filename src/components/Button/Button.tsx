@@ -1,13 +1,14 @@
 import React from 'react'
-import { Button as MuiButton, Box, ButtonProps, SxProps } from '@mui/material'
+import { Button as MuiButton, Box, ButtonProps, SxProps, CircularProgress } from '@mui/material'
 
 interface CustomButtonProps {
   variant?: 'primary' | 'secondary',
   sx?: SxProps
+  isLoading?: boolean
 }
 
 export const Button: React.FC<CustomButtonProps & Omit<ButtonProps, 'variant'>> = ((props) => {
-  const { children, variant, sx, ...rest } = props
+  const { children, variant, isLoading, sx, ...rest } = props
 
   if(variant === 'primary') {
     return (
@@ -26,6 +27,9 @@ export const Button: React.FC<CustomButtonProps & Omit<ButtonProps, 'variant'>> 
           ...sx
         }}
       >
+        {isLoading && (
+          <CircularProgress sx={{ color: 'white', marginRight: 1, maxWidth: '23px', maxHeight: '23px' }} />
+        )}
         {children}
       </Box>
     )
@@ -45,6 +49,9 @@ export const Button: React.FC<CustomButtonProps & Omit<ButtonProps, 'variant'>> 
           ...sx
         }}
       >
+        {isLoading && (
+          <CircularProgress sx={{ color: '#a9cf46', marginRight: 1, maxWidth: '23px', maxHeight: '23px' }} />
+        )}
         {children}
       </Box>
     )

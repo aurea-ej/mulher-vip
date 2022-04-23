@@ -27,46 +27,48 @@ export const Slide: React.FC<SlideProps> = ({ bannerImages }) => {
   //   return bannerImagesTemp
   // },[storage])
 
-  return (
-    <Stack sx={{ textAlign: 'center', width: '100vw', height: '40vh', marginTop: 3 }} direction='row'>
-      <Carousel
-        autoPlay
-        swipeable
-        stopOnHover
-        emulateTouch
-        infiniteLoop
-        interval={6000}
-        showArrows={false}
-        showStatus={false}
-        showThumbs={false}
-        className='carousel'
-        showIndicators={false}
-      >
-        {bannerImages.map((item, key) => (
-          <CarouselCard key={key}>
-            <Avatar
-              src={item}
-              alt='Banner image'
-              variant='square'
-              imgProps={{ style: { objectFit: 'contain' } }}
-              sx={{
-                width: '100%',
-                height: '100%',
-              }}
-            />
-            {/* <Box
-                component={Avatar}
-                imgProps={{ style: { objectFit: 'contain' } }}
-                sx={{
-                  width: '100vw',
-                  height: '40vw',
-                  backgroundSize: 'cover',
-                  backgroundImage: `url(${item})`,
-                }}
-              /> */}
-          </CarouselCard>
-        ))}
-      </Carousel>
-    </Stack>
-  )
+  return null
+
+  // return (
+  //   <Stack sx={{ textAlign: 'center', width: '100vw', height: '40vh', marginTop: 3 }} direction='row'>
+  //     <Carousel
+  //       autoPlay
+  //       swipeable
+  //       stopOnHover
+  //       emulateTouch
+  //       infiniteLoop
+  //       interval={6000}
+  //       showArrows={false}
+  //       showStatus={false}
+  //       showThumbs={false}
+  //       className='carousel'
+  //       showIndicators={false}
+  //     >
+  //       {bannerImages.map((item, key) => (
+  //         <CarouselCard key={key}>
+  //           <Avatar
+  //             src={item}
+  //             alt='Banner image'
+  //             variant='square'
+  //             imgProps={{ style: { objectFit: 'contain' } }}
+  //             sx={{
+  //               width: '100%',
+  //               height: '100%',
+  //             }}
+  //           />
+  //           {/* <Box
+  //               component={Avatar}
+  //               imgProps={{ style: { objectFit: 'contain' } }}
+  //               sx={{
+  //                 width: '100vw',
+  //                 height: '40vw',
+  //                 backgroundSize: 'cover',
+  //                 backgroundImage: `url(${item})`,
+  //               }}
+  //             /> */}
+  //         </CarouselCard>
+  //       ))}
+  //     </Carousel>
+  //   </Stack>
+  // )
 }

@@ -7,11 +7,13 @@
       "esnext"
     ],
     "allowJs": true,
+    // "checkJS": true,
+    "sourceMap": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": false,
     // "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
@@ -19,8 +21,17 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "./",
+    "paths": {
+      "~/*": [
+        "src/*"
+      ]
+    }
   },
+  "exclude": [
+    "node_modules"
+  ],
   "include": [
     "src"
   ]
