@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
 import 'firebase/auth'
 import 'firebase/database'
 import { Slide } from './components'
@@ -18,6 +18,7 @@ import { getDownloadURL, getStorage, listAll, ref } from 'firebase/storage'
 export const Home: React.FC = () => {
   const storage = getStorage()
   const isMobile = useIsMobile()
+  const [bannerImages, setBannerImages] = useState<string[]>([])
 
   const { storeState: { user } } = useUserStore()
   const { storeState: { haveFilteredItems }, operations: { updateHaveFilteredItems } } = useHaveFilteredItemsStore()
@@ -31,20 +32,19 @@ export const Home: React.FC = () => {
     updateHaveFilteredItems(true)
   }
 
-  const bannerImages = useMemo(()=>{
+  useEffect(() => {
     const listRef = ref(storage, 'bannerImages/')
-    const bannerImagesTemp: string[] = []
     listAll(listRef)
       .then((res) => {
         res.items.forEach((itemRef) => {
           getDownloadURL(ref(itemRef))
             .then((downloadURL) => {
-              bannerImagesTemp.push(downloadURL)
+              return setBannerImages([...bannerImages, downloadURL])
             })
         })
       })
-    return bannerImagesTemp
-  },[storage])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
 
   useEffect(()=>{
     getProducts(updateItems)
