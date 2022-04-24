@@ -46,7 +46,7 @@ export const Account: React.FC = () => {
       getUser()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[user])
+  },[])
 
   if(isLoading) {
     return (

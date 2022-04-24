@@ -2,22 +2,22 @@ import { Box } from '@mui/system'
 import { SeeSale } from './components'
 import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
-import { Sale, SaleStatus, SaleStatusTitle } from '../../../../types/item'
 import { useIsMobile } from '../../../../hooks'
 import { app } from '../../../../FIREBASECONFIG.js'
-import { useModal } from '../../../../hooks/useModal'
 import { Container, EmptyPage } from '../../../../components'
 import { getDatabase, ref, onValue } from 'firebase/database'
 import { PaymentMethodTitle } from '../../../../types/payment'
 import { CircularProgress, Stack, Typography } from '@mui/material'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+import { Sale, SaleStatus, SaleStatusTitle } from '../../../../types/item'
 
 export const TrackSales: React.FC = () => {
   const db = getDatabase(app)
   const isMobile = useIsMobile()
   const { enqueueSnackbar } = useSnackbar()
   const [sales, setSales] = useState<Sale[] | []>()
-  const [seeSaleIsOpen, toggleSeeSale] = useModal()
   const [selectedSale, setSelectedSale] = useState<Sale>()
+  const [seeSaleIsOpen, setSeeSaleIsOpen] = useState<boolean>(false)
 
   const getSales = () => {
     const cartProductsRef = ref(db, 'sales/')
@@ -26,19 +26,18 @@ export const TrackSales: React.FC = () => {
         if (snapshot.exists()) {
           const data = snapshot.val() as Sale[]
           var items = Object.keys(data).map((key: any) => data[key]).reverse()
-          if(items.length > 0 ){
+          if (items.length > 0) {
             setSales(items)
-            toggleSeeSale()
             return
           }
         }
         setSales([])
       })
     } catch (error) {
-      return enqueueSnackbar('Ocorreu um erro ao recuperar seus itens do carrinho', { 
+      return enqueueSnackbar('Ocorreu um erro ao recuperar seus itens do carrinho', {
         variant: 'error',
         autoHideDuration: 3000
-      }) 
+      })
     }
   }
 
@@ -52,27 +51,27 @@ export const TrackSales: React.FC = () => {
 
       case SaleStatus.DELIVERED:
         return 'green'
-    
+
       default:
         return 'orange'
     }
 
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getSales()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  if(!sales) {
+  if (!sales) {
     return (
       <Container>
         <CircularProgress sx={{ color: '#a9cf46' }} />
       </Container>
-    ) 
+    )
   }
 
-  if(sales.length === 0) {
+  if (sales.length === 0) {
     return (
       <Container>
         <EmptyPage />
@@ -83,7 +82,10 @@ export const TrackSales: React.FC = () => {
   return (
     <Container>
       <Stack justifyContent='center' alignItems='center' sx={{ paddingX: 2, width: isMobile ? '85%' : '90%', }}>
-        {sales.map((sale, key)=>(
+        <Stack width='100%' alignItems='center' marginY={3}>
+          <Typography variant='h4'>Acompanhe aqui suas vendas</Typography>
+        </Stack>
+        {sales.map((sale, key) => (
           <Stack direction={isMobile ? 'column' : 'row'} alignItems='center' justifyContent='center' key={key}
             sx={{
               marginY: 2,
@@ -105,6 +107,15 @@ export const TrackSales: React.FC = () => {
               <Typography><b>Endereço:</b> {sale.account.address}, {sale.account.district} - {sale.account.houseNumber}</Typography>
               <Typography><b>Pagamento:</b> {PaymentMethodTitle[sale.paymentMethod]}</Typography>
             </Stack>
+            <Stack mt={isMobile ? 3 : 0} sx={{ color: '#9CADBF', width: '100%' }}>
+              <Typography><b>Itens:</b></Typography>
+              {sale.items.map((item, key) => (
+                <Stack alignItems='center' key={key} direction='row'>
+                  <ArrowForwardIosIcon sx={{ color: '#a9cf46', height: '15px' }} />
+                  <Typography>{item.name} - {item.amount} unidade</Typography>
+                </Stack>
+              ))}
+            </Stack>
             <Stack>
               <Box
                 mt={2}
@@ -118,7 +129,10 @@ export const TrackSales: React.FC = () => {
                   borderRadius: '30px',
                   boxShadow: '0px 2px 5px rgba(0, 0, 0, .1)',
                 }}
-                onClick={()=>setSelectedSale(sale)}
+                onClick={() => {
+                  setSelectedSale(sale)
+                  setSeeSaleIsOpen(true)
+                }}
               >
                 <Typography sx={{ whiteSpace: 'nowrap' }}>Ver compra</Typography>
               </Box>
@@ -127,7 +141,7 @@ export const TrackSales: React.FC = () => {
         )
         )}
       </Stack>
-      {selectedSale && <SeeSale sale={selectedSale} isOpen={seeSaleIsOpen} closeModal={toggleSeeSale} />}
+      {selectedSale && <SeeSale sale={selectedSale} isOpen={seeSaleIsOpen} closeModal={() => setSeeSaleIsOpen(false)} />}
     </Container>
   )
 }

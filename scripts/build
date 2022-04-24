@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export REACT_APP_API_URL=$(aws ssm get-parameter --name /scora/backend/${ENVIRONMENT}/API_URL --query "Parameter.Value" --output text)
+export REACT_APP_SENTRY_DSN=$(aws ssm get-parameter --name /scora/app/${ENVIRONMENT}/SENTRY_DSN --query "Parameter.Value" --output text)
+export REACT_APP_ENVIRONMENT=$ENVIRONMENT
+node ./scripts/build.js

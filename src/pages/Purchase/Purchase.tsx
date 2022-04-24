@@ -7,7 +7,7 @@ import { useUserStore } from '../../store/user/reducer'
 import { PaymentMethodTitle } from '../../types/payment'
 import { useAccountStore } from '../../store/account/reducer'
 import { getDatabase, onValue, ref } from 'firebase/database'
-import { FullScreenItemCard, Container } from '../../components'
+import { FullScreenItemCard, Container, EmptyPage } from '../../components'
 import { SaleByProps, CartItem, Sale, SaleStatusTitle, SaleStatus } from '../../types/item'
 
 export type PurchaseProps = ModalProps & SaleByProps
@@ -24,7 +24,7 @@ export const Purchase: React.FC = () => {
     onValue(productsRef, (snapshot) => {
       const data = snapshot.val() as Sale[]
       var items = Object.keys(data).map((key: any) => data[key])
-      if(items.length > 0 ) {
+      if (items.length > 0) {
         setSales(items.filter(item => item.account.id === account?.id).reverse())
       }
     })
@@ -40,33 +40,38 @@ export const Purchase: React.FC = () => {
 
       case SaleStatus.DELIVERED:
         return 'green'
-    
+
       default:
         return 'orange'
     }
 
   }
 
-  useEffect(()=>{
-    if(!user || !account) {
+  useEffect(() => {
+    if (!user || !account) {
       getUserInfos(updateAccount)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     getSales()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[account])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account])
 
-  if(!sales)
-    return <div>oi</div>
+  if (!sales) {
+    return (
+      <Container>
+        <EmptyPage />
+      </Container>
+    )
+  }
 
   return (
     <Container>
       <Stack width={isMobile ? 'auto' : '60vw'} mt={2}>
         <Typography mt={3} mb={4} sx={{ textAlign: 'center' }} variant='h4'>Suas Compras</Typography>
-        {sales.map((sale: Sale)=>(
+        {sales.map((sale: Sale) => (
           <Stack mb={4} width='100%' sx={{ borderBottom: '1px dashed #9CADBF' }}>
             <Typography sx={{ paddingLeft: 1, display: 'flex' }}>
               <Typography sx={{ opacity: .4 }}>Status:</Typography>
@@ -74,7 +79,7 @@ export const Purchase: React.FC = () => {
             </Typography>
             <Typography sx={{ paddingLeft: 1, opacity: .4 }}>Método de pagamento: {PaymentMethodTitle[sale.paymentMethod]}</Typography>
             <Stack alignItems='center' width='100%'>
-              {sale.items.map((item: CartItem, index)=>(
+              {sale.items.map((item: CartItem, index) => (
                 <Stack alignItems='center' sx={{ width: '80%' }}>
                   <FullScreenItemCard item={item} key={index} />
                 </Stack>

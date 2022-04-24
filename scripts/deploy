@@ -1,0 +1,7 @@
+#!/bin/bash -eu
+
+BUCKET_NAME=$(cd terraform && terraform output -json bucket_name | jq -r '.')
+DISTRIBUTION_ID=$(cd terraform && terraform output -json distribution_id | jq -r '.')
+
+aws s3 sync build/ s3://${BUCKET_NAME}/
+aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_ID} --paths /
