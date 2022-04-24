@@ -46,6 +46,7 @@ export const SeeSale: React.FC<SeeSaleModalProps> = ({ sale, isOpen, closeModal 
         paddingY: 2,
         height: '90vh',
         maxHeight: '90vh',
+        overflowX: 'hidden',
         paddingX: isMobile ? 1 : 4,
         borderTopLeftRadius: '20px',
         borderTopRightRadius: '20px',
@@ -70,14 +71,12 @@ export const SeeSale: React.FC<SeeSaleModalProps> = ({ sale, isOpen, closeModal 
       </Stack>
 
       <Stack
-        sx={{ 
-          margin: '0 auto',
-          position: 'fixed',
-          bottom: 25,
-        }}
+        marginY={3}
         spacing={3}
+        width='100%'
         direction='row'
         alignItems='center'
+        justifyContent='center'
       >
         <Button
           variant='secondary'

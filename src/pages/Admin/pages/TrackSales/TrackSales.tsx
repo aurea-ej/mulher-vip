@@ -28,7 +28,6 @@ export const TrackSales: React.FC = () => {
           var items = Object.keys(data).map((key: any) => data[key]).reverse()
           if (items.length > 0) {
             setSales(items)
-            setSeeSaleIsOpen(true)
             return
           }
         }
@@ -83,6 +82,9 @@ export const TrackSales: React.FC = () => {
   return (
     <Container>
       <Stack justifyContent='center' alignItems='center' sx={{ paddingX: 2, width: isMobile ? '85%' : '90%', }}>
+        <Stack width='100%' alignItems='center' marginY={3}>
+          <Typography variant='h4'>Acompanhe aqui suas vendas</Typography>
+        </Stack>
         {sales.map((sale, key) => (
           <Stack direction={isMobile ? 'column' : 'row'} alignItems='center' justifyContent='center' key={key}
             sx={{
@@ -139,7 +141,7 @@ export const TrackSales: React.FC = () => {
         )
         )}
       </Stack>
-      {selectedSale && <SeeSale sale={selectedSale} isOpen={seeSaleIsOpen} closeModal={()=>setSeeSaleIsOpen(false)} />}
+      {selectedSale && <SeeSale sale={selectedSale} isOpen={seeSaleIsOpen} closeModal={() => setSeeSaleIsOpen(false)} />}
     </Container>
   )
 }
