@@ -1,18 +1,19 @@
 import 'firebase/auth'
 import 'firebase/database'
 import * as yup from 'yup'
+import { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router'
 import { app } from '../../../../FIREBASECONFIG.js'
 import { User, Account } from '../../../../types/user'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Box, Button, Grid, Stack } from '@mui/material'
 import { getDatabase, ref, set } from 'firebase/database'
 import { useIsMobile } from '../../../../hooks/useIsMobile'
+import { Box, Grid, Stack, Typography } from '@mui/material'
 import { useUserStore } from '../../../../store/user/reducer'
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
-import { Container, HfField, TextInput, PasswordInput, DateInput } from '../../../../components'
+import { Container, HfField, TextInput, PasswordInput, DateInput, Button, NumericalMaskedInput } from '../../../../components'
 
 type formValuesType = Omit<Account, 'isAdmin' | 'id'> & { senha: string | null }
 
@@ -22,9 +23,10 @@ export const SignUp: React.FC = () => {
   const history = useHistory()
   const isMobile = useIsMobile()
   const { enqueueSnackbar } = useSnackbar()
+  const [isLoading, setIsLoading] = useState(false)
   const { operations: { updateUser } } = useUserStore()
 
-  const DEFAULT_FORM_VALUES: formValuesType  = {
+  const DEFAULT_FORM_VALUES: formValuesType = {
     cep: '',
     city: '',
     name: '',
@@ -50,7 +52,8 @@ export const SignUp: React.FC = () => {
     birthDate: yup.date().required('Campo obrigatório'),
   })
 
-  const onSubmit = (formValues: formValuesType ) => {
+  const onSubmit = (formValues: formValuesType) => {
+    setIsLoading(true)
     try {
       createUserWithEmailAndPassword(auth, formValues.email, formValues.senha!)
         .then((userCredential) => {
@@ -58,17 +61,19 @@ export const SignUp: React.FC = () => {
           formValues.senha = null
           formValues.birthDate = formValues.birthDate!.toString()
           set(ref(db, 'userInfo/' + user.uid), { ...formValues, id: user.uid, isAdmin: false })
-            .then(()=>{
+            .then(() => {
               updateUser(user)
+              setIsLoading(false)
               history.push('/')
-              return enqueueSnackbar('Cadastro realizado com sucesso', { 
+              return enqueueSnackbar('Cadastro realizado com sucesso', {
                 variant: 'success',
                 autoHideDuration: 3000
               })
             })
         })
     } catch (error) {
-      return enqueueSnackbar('Ops! ocorreu um erro ao realizar o cadastro', { 
+      setIsLoading(false)
+      return enqueueSnackbar('Ops! ocorreu um erro ao realizar o cadastro', {
         variant: 'error',
         autoHideDuration: 3000
       })
@@ -83,6 +88,7 @@ export const SignUp: React.FC = () => {
   return (
     <Container>
       <Box sx={{ padding: 3 }}>
+        <Typography mb={3} sx={{ alignText: 'center' }} variant='h4'>Criar sua conta</Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid spacing={2} container>
             <Grid item md={isMobile ? 12 : 4} lg={isMobile ? 12 : 4} xs={isMobile ? 12 : 4}>
@@ -121,7 +127,8 @@ export const SignUp: React.FC = () => {
                 inputType='flat'
                 control={control}
                 placeholder='Telefone'
-                component={TextInput}
+                mask='(##)#-####-####'
+                component={NumericalMaskedInput}
                 errorMessage={errors.phone?.message}
               />
             </Grid>
@@ -187,21 +194,9 @@ export const SignUp: React.FC = () => {
             </Grid>
           </Grid>
           <Stack mt={3} alignItems='center' justifyContent='center' sx={{ width: '100%' }}>
-            <Box
-              type='submit'
-              component={Button}
-              sx={{
-                padding: 2,
-                color: 'white',
-                borderRadius: 3,
-                alignItems: 'center',
-                cursor: 'pointer',
-                bgcolor: '#a9cf46',
-                width: isMobile ? '80vw' : 'auto',
-                '&:hover': { backgroundColor: '#a9cf46' },
-                boxShadow: '0px 0px 5px rgba(169, 207, 70, 1)',
-              }}
-            >Criar conta</Box>
+            <Button variant='primary' disabled={isLoading} type='submit'>
+              Criar conta
+            </Button>
           </Stack>
         </form>
       </Box>

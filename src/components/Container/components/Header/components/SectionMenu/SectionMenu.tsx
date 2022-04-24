@@ -68,14 +68,14 @@ export const SectionMenu: React.FC<SectionMenuProps> = ({ title, category }) => 
     setOpen(false)
   }
 
-  const prevOpen = useRef(open)
-  useEffect(() => {
-    if (prevOpen.current === true && open === false) {
-      anchorRef.current!.focus()
-    }
+  // const prevOpen = useRef(open)
+  // useEffect(() => {
+  //   if (prevOpen.current === true && open === false) {
+  //     anchorRef.current!.focus()
+  //   }
 
-    prevOpen.current = open
-  }, [open])
+  //   prevOpen.current = open
+  // }, [open])
 
   return(
     <>

@@ -12,22 +12,22 @@ const App: React.FC = () => {
         <Route exact path='/'>
           <Home />
         </Route>
-        <Route exact path='/cart'>
+        <Route path='/cart'>
           <Cart />
         </Route>
-        <Route exact path='/account'>
+        <Route path='/account'>
           <Account />
         </Route>
-        <Route exact path='/signUp'>
+        <Route path='/signUp'>
           <SignUp />
         </Route>
-        <Route exact path='/admin'>
+        <Route path='/admin'>
           <Admin />
         </Route>
-        <Route exact path='/purchase'>
+        <Route path='/purchase'>
           <Purchase />
         </Route>
-        <Route exact path='/admin/vendas'>
+        <Route path='/admin/vendas'>
           <TrackSales />
         </Route>
       </Switch>

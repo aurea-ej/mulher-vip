@@ -93,23 +93,23 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
     })
   }
 
-  useEffect(() => {
-    const item: Item = items.filter(item => item.id === selectedItemWatch)[0]
-    if(item){
-      setValue('name', item?.name)
-      setValue('price', item?.price)
-      setValue('imageUrl', item?.imageUrl)
-      setValue('description', item?.description)
-      setValue('sizeP', item?.arraySize[0])
-      setValue('sizeM', item?.arraySize[1])
-      setValue('sizeG', item?.arraySize[2])
-      setValue('sizePS', item?.arraySize[3])
-      setValue('sizeTU', item?.arraySize[4])
-      return
-    }
-    resetForm()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[selectedItemWatch])
+  // useEffect(() => {
+  //   const item: Item = items.filter(item => item.id === selectedItemWatch)[0]
+  //   if(item){
+  //     setValue('name', item?.name)
+  //     setValue('price', item?.price)
+  //     setValue('imageUrl', item?.imageUrl)
+  //     setValue('description', item?.description)
+  //     setValue('sizeP', item?.arraySize[0])
+  //     setValue('sizeM', item?.arraySize[1])
+  //     setValue('sizeG', item?.arraySize[2])
+  //     setValue('sizePS', item?.arraySize[3])
+  //     setValue('sizeTU', item?.arraySize[4])
+  //     return
+  //   }
+  //   resetForm()
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // },[selectedItemWatch])
 
   useEffect(()=> {
     if(items.length === 0){
