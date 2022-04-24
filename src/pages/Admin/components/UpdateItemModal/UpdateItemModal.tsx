@@ -1,7 +1,7 @@
 import * as yup from 'yup'
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
-import { useMemo, useEffect } from 'react'
+import { useMemo, useEffect, useState } from 'react'
 import { Close } from '@mui/icons-material'
 import { Size } from '../../../../types/item'
 import { Item } from '../../../../types/item'
@@ -14,6 +14,7 @@ import { useItemsStore } from '../../../../store/items/reducer'
 import { categoryOptions, codeOptions } from '../../../../utils/options'
 import { Drawer, Stack, Typography, FormControl, FormGroup } from '@mui/material'
 import { HfField, TextInput, SelectInput, Button, CheckBox } from '../../../../components'
+import { uploadBytes, ref as storageRef, getStorage, getDownloadURL } from 'firebase/storage'
 
 
 type SizeOptions = {
@@ -30,9 +31,14 @@ type InsertItemFormValues = Partial<Item> & SizeOptions & {
 
 export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
   const db = getDatabase()
+  const storage = getStorage()
   const isMobile = useIsMobile()
   const { enqueueSnackbar } = useSnackbar()
+  const [newProductImage, setProductImage] = useState<any>()
+  const [newProductImageUrl, setProductImageUrl] = useState<string>()
   const { storeState: { items }, operations: { updateItems } } = useItemsStore()
+  const [insertImageIsLoading, setInsertImageIsLoading] = useState<boolean>(false)
+  const [isUpdating, setIsUpdating] = useState<boolean>(false)
   const isAvailableOptions = [{ value: 0, label: '---' },{ value: 1, label: 'Disponível' }, { value: 2, label: 'Indisponível' }]
 
   const ItemsOptions = useMemo(()=> {
@@ -43,7 +49,7 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
     category: yup.mixed().required('Campo obrigatório'),
     code: yup.mixed().required('Campo obrigatório'),
     description: yup.string().required('Campo obrigatório'),
-    imageUrl: yup.string().required('Campo obrigatório'),
+    imageUrl: yup.string(),
     name: yup.string().required('Campo obrigatório'),
     price: yup.number().required('Campo obrigatório'),
     id: yup.string(),
@@ -57,7 +63,7 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
     sizeTU: yup.boolean(),
   })
 
-  const { control, handleSubmit, watch, reset, formState: { errors }, setValue } = useForm<InsertItemFormValues>({
+  const { control, handleSubmit, watch, reset, formState: { errors } } = useForm<InsertItemFormValues>({
     resolver: yupResolver(validationSchema)
   })
 
@@ -78,14 +84,18 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
   const sizeTU = watch('sizeTU')
 
   const onSubmit = (formValues: InsertItemFormValues ) => {
+    setIsUpdating(true)
     const arraySize = [!!sizeP, !!sizeM, !!sizeG, !!sizePS, !!sizeTU]
 
-    update(ref(db, '/products/' + selectedItemWatch), { ...formValues, arraySize } ).then(()=>{
+    update(ref(db, '/products/' + selectedItemWatch), { ...formValues, arraySize, imageUrl: newProductImageUrl } ).then(()=>{
+      setIsUpdating(false)
+      resetForm()
       return enqueueSnackbar('Item atualizado com sucesso!', {
         variant: 'success',
         autoHideDuration: 3000
       })
     }).catch(()=>{
+      setIsUpdating(false)
       return enqueueSnackbar('Ops! ocorreu um erro ao tentar atualizar o item', {
         variant: 'error',
         autoHideDuration: 3000
@@ -93,23 +103,28 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
     })
   }
 
-  // useEffect(() => {
-  //   const item: Item = items.filter(item => item.id === selectedItemWatch)[0]
-  //   if(item){
-  //     setValue('name', item?.name)
-  //     setValue('price', item?.price)
-  //     setValue('imageUrl', item?.imageUrl)
-  //     setValue('description', item?.description)
-  //     setValue('sizeP', item?.arraySize[0])
-  //     setValue('sizeM', item?.arraySize[1])
-  //     setValue('sizeG', item?.arraySize[2])
-  //     setValue('sizePS', item?.arraySize[3])
-  //     setValue('sizeTU', item?.arraySize[4])
-  //     return
-  //   }
-  //   resetForm()
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // },[selectedItemWatch])
+  const handleImage = (event: any) => {
+    const file = event.target.files[0]
+    setProductImage(file)
+  }
+
+  const generateImageUrl = () => {
+    setInsertImageIsLoading(true)
+    const imageRef = storageRef(storage,`productsImages/${newProductImage.name.trim()}`)
+
+    uploadBytes(imageRef, newProductImage).then((snapshot: any) => {
+      getDownloadURL(storageRef(imageRef))
+        .then((downloadURL) => {
+          setInsertImageIsLoading(false)
+          setProductImageUrl(downloadURL)
+        })
+      setInsertImageIsLoading(false)
+      return enqueueSnackbar('Imagem adicionada com sucesso',{
+        variant: 'success',
+        autoHideDuration: 3000
+      })
+    })
+  }
 
   useEffect(()=> {
     if(items.length === 0){
@@ -117,8 +132,6 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
-
-  // console.log('items',items[selectedItemWatch])
 
   return (
     <Drawer
@@ -152,7 +165,7 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
             />
             <HfField
               name='name'
-              placeholder='Nome'
+              label='Nome'
               inputType='flat'
               control={control}
               component={TextInput}
@@ -162,23 +175,15 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               name='description'
               inputType='flat'
               control={control}
-              placeholder='Descrição'
+              label='Descrição'
               component={TextInput}
               errorMessage={errors.description?.message}
-            />
-            <HfField
-              name='imageUrl'
-              inputType='flat'
-              control={control}
-              placeholder='Url'
-              component={TextInput}
-              errorMessage={errors.imageUrl?.message}
             />
             <HfField
               name='price'
               inputType='flat'
               control={control}
-              placeholder='Preço'
+              label='Preço'
               component={TextInput}
               errorMessage={errors.price?.message}
             />
@@ -209,6 +214,21 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
               component={SelectInput}
               errorMessage={errors.isAvailable?.message}
             />
+            <Stack spacing={2} mt={5}>
+              <Stack alignItems='center'  direction={isMobile ? 'column' : 'row'} mt={5}>
+                <Typography variant='h6' sx={{ color: '#9CADBF', marginRight: 2 }}>Imagem do produto: </Typography>
+                <input type='file' onChange={handleImage} accept='image/png, image/jpeg' placeholder='Imagem'/>
+              </Stack>
+              <Button
+                variant='secondary'
+                sx={{ width: isMobile? '100%' : '30%' }}
+                onClick={generateImageUrl}
+                isLoading={insertImageIsLoading}
+                disabled={!(!!newProductImage)}
+              >
+              Inserir imagem
+              </Button>
+            </Stack>
             <Stack>
               <Typography>Tamanhos disponíveis:</Typography>
               <FormControl>
@@ -256,7 +276,7 @@ export const UpdateItemModal: React.FC<ModalProps> = ({ isOpen, closeModal }) =>
                 </FormGroup>
               </FormControl>
             </Stack>
-            <Button sx={{ marginTop: 5 }} variant='primary' disabled={!selectedItemWatch} type='submit'>Atualizar</Button>
+            <Button sx={{ marginTop: 5 }} variant='primary' disabled={!selectedItemWatch} isLoading={isUpdating} type='submit'>Atualizar</Button>
           </Stack>
         </form>
       </Stack>
