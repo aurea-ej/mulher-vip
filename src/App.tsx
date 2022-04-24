@@ -21,7 +21,7 @@ const App: React.FC = () => {
         <Route path='/signUp'>
           <SignUp />
         </Route>
-        <Route path='/admin'>
+        <Route exact path='/admin'>
           <Admin />
         </Route>
         <Route path='/purchase'>
