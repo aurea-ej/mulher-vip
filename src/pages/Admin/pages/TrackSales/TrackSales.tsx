@@ -4,7 +4,6 @@ import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 import { useIsMobile } from '../../../../hooks'
 import { app } from '../../../../FIREBASECONFIG.js'
-import { useModal } from '../../../../hooks/useModal'
 import { Container, EmptyPage } from '../../../../components'
 import { getDatabase, ref, onValue } from 'firebase/database'
 import { PaymentMethodTitle } from '../../../../types/payment'
@@ -17,8 +16,8 @@ export const TrackSales: React.FC = () => {
   const isMobile = useIsMobile()
   const { enqueueSnackbar } = useSnackbar()
   const [sales, setSales] = useState<Sale[] | []>()
-  const [seeSaleIsOpen, toggleSeeSale] = useModal()
   const [selectedSale, setSelectedSale] = useState<Sale>()
+  const [seeSaleIsOpen, setSeeSaleIsOpen] = useState<boolean>(false)
 
   const getSales = () => {
     const cartProductsRef = ref(db, 'sales/')
@@ -29,7 +28,7 @@ export const TrackSales: React.FC = () => {
           var items = Object.keys(data).map((key: any) => data[key]).reverse()
           if (items.length > 0) {
             setSales(items)
-            toggleSeeSale()
+            setSeeSaleIsOpen(true)
             return
           }
         }
@@ -128,7 +127,10 @@ export const TrackSales: React.FC = () => {
                   borderRadius: '30px',
                   boxShadow: '0px 2px 5px rgba(0, 0, 0, .1)',
                 }}
-                onClick={() => setSelectedSale(sale)}
+                onClick={() => {
+                  setSelectedSale(sale)
+                  setSeeSaleIsOpen(true)
+                }}
               >
                 <Typography sx={{ whiteSpace: 'nowrap' }}>Ver compra</Typography>
               </Box>
@@ -137,7 +139,7 @@ export const TrackSales: React.FC = () => {
         )
         )}
       </Stack>
-      {selectedSale && <SeeSale sale={selectedSale} isOpen={seeSaleIsOpen} closeModal={toggleSeeSale} />}
+      {selectedSale && <SeeSale sale={selectedSale} isOpen={seeSaleIsOpen} closeModal={()=>setSeeSaleIsOpen(false)} />}
     </Container>
   )
 }
